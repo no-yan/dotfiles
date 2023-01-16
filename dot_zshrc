@@ -1,0 +1,193 @@
+#!/bin/zsh
+
+export NODE_OPTIONS="--max-old-space-size=10000"
+export PATH=/opt/homebrew/bin:$PATH
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+export GODEBUG=asyncpreemptoff=1
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+fpath+=~/.zfunc
+# Homebrew: Configuring Completions in zsh
+# https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
+
+# llvm
+# export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+# export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+
+
+# Alias for Git
+alias gcb="git checkout -b"
+alias gcm="git commit -m"
+alias gal='git add -A'
+alias gp="git push"
+alias currentBranch="git branch --contains"
+
+# Alias for zsh
+alias sz='source ~/.zshrc'
+alias vz='vi ~/.zshrc'
+function mkdircd() {
+  mkdir $1
+  cd $1
+}
+
+# Alias for VS code
+# Make `cd` from a vscode terminal go to the workspace root
+# Assume the following is in vscode settings:
+# "terminal.integrated.env.linux":  {"VSCODE_WS": "${workspaceFolder}"},
+# "terminal.integrated.env.windows":{"VSCODE_WS": "${workspaceFolder}"},
+# When in filemode / not in a workspace, `VSCODE_WS` is set to the literal `${workspaceFolder}` so we check and ignore that
+function ws() {
+  if [ -n ${VSCODE_WS} ] ; then
+      cd "${VSCODE_WS}"
+  fi
+}
+
+# Alias for yarn workspacee
+alias yaw="yarn workspace"
+
+# Atcoder
+# for Atcoder-cli
+alias acc-s='acc s main.py -- --guess-python-interpreter pypy'
+# for online judge tools
+alias oj-t='oj t -c "pypy main.py"'
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+# export SDKMAN_DIR="/home/note/.sdkman"
+# [[ -s "/home/note/.sdkman/bin/sdkman-init.sh" ]] && source "/home/note/.sdkman/bin/sdkman-init.sh"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+# https://qiita.com/kassy11/items/77456688a392ddb0b285
+function fzf-ghq() {
+  local selected_dir=$(ghq list | fzf --prompt="Git Repos > " --preview "batcat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
+
+  if [ -n "$selected_dir" ]; then
+    BUFFER="code $(ghq root)/${selected_dir}"
+    zle accept-line
+  fi
+
+  zle reset-prompt
+}
+
+zle -N fzf-ghq
+bindkey "^g" fzf-ghq
+
+# create GitHub repo, then open in vscode
+function ghcr() {
+ gh repo create $argv
+ ghq get ${argv[1]}
+ code $(ghq list --full-path -e ${argv[1]})
+}
+
+function ghget() {
+  code $(ghq list --full-path -e ${argv[1]})
+}
+
+alias ghcd='cd $(ghq list --full-path | fzf)'
+
+# .gitignore
+# Create .gitignore Template from github/gitignore
+# If no specific language is given, all templates will be displayed
+
+function gignore() {
+  local templateType
+
+  if [ $# = 0 ]; then
+    templateType=$(curl -s -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/gitignore/templates  | jq -r '.[]' | fzf)
+  else
+    templateType=$1
+  fi
+  curl -s -H "Accept: application/vnd.github.v3+json"  https://api.github.com/gitignore/templates/${templateType} | jq -r '.source' > .gitignore
+}
+
+# 補完候補を詰めて表示
+setopt list_packed
+
+# 補完候補一覧をカラー表示
+autoload colors
+zstyle ':completion:*' list-colors ''
+
+
+
+# ディレクトリスタック
+DIRSTACKSIZE=100
+setopt AUTO_PUSHD
+
+# git
+
+
+# プロンプトカスタマイズ
+PROMPT="[%F{green}%~%f]%F{cyan}$vcs_info_msg_0_%f%F{yellow}$%f "$'\n'">  "
+RPROMPT="%F{cyan}<`git config user.name`>"
+autoload -Uz vcs_info
+setopt prompt_subst;
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' stagedstr "%F{magenta}!"
+zstyle ':vcs_info:git:*' unstagedstr "%F{yellow}+"
+zstyle ':vcs_info:*' formats "%F{cyan}%c%u[%b]%f"
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
+precmd (){ 'vcs_info'; }
+
+unset env
+# end of git ssh setting
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# smlnj i.e. Standard ML
+export PATH="/usr/local/smlnj/bin:$PATH"
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
+if test -e "${HOME}/.iterm2_shell_integration.zsh";
+  then source "${HOME}/.iterm2_shell_integration.zsh"
+fi
+
+# python package manager
+export PATH="/Users/okamoto-wataru/.local/bin:$PATH"
+
+# _fzf_complete_git() {
+#     ARGS="$@"
+#     local branches
+#     branches=$(git branch -vv --all)
+#     if [[ $ARGS == 'git co'* ]]; then
+#         _fzf_complete --reverse --multi -- "$@" < <(
+#             echo $branches
+#         )
+#     else
+#         eval "zle ${fzf_default_completion:-expand-or-complete}"
+#     fi
+# }
+
+# _fzf_complete_git_post() {
+#     awk '{print $1}'
+# }
+
+# aws cli auto completion
+complete -C '/usr/local/bin/aws_completer' aws
+
+complete -o nospace -C /opt/homebrew/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/okamoto-wataru/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/okamoto-wataru/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/okamoto-wataru/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/okamoto-wataru/google-cloud-sdk/completion.zsh.inc'; fi
+
+# ESMeta
+
+export ESMETA_HOME="/Users/okamoto-wataru/ghq/github.com/es-meta/esmeta" # IMPORTANT!!!
+export PATH="$ESMETA_HOME/bin:$PATH" # for executables `esmeta` and etc.
+source $ESMETA_HOME/.completion # for auto-completion
+
