@@ -1,0 +1,51 @@
+[user]
+	name = no-yan
+	email = 63000297+no-yan@users.noreply.github.com
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+[credential "https://github.com"]
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[credential "https://gist.github.com"]
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[init]
+	defaultBranch = main
+[includeIf "gitdir:~/ghq/git.dmm.com/"]
+   path = ~/.gitconfig_dmmep
+
+[alias]
+	aliases = config --get-regexp '^alias\\.'
+	s = status
+	cp = cherry-pick
+	co = checkout
+	fixit = commit --amend --no-edit
+	wip = commit -m 'wip'
+	pushf = push --force-with-lease
+	coi = !git co $(git r | fzf)
+	r = !git reflog -n 50 --pretty=format:'%gs' | "perl -anal -e '$seen{$1}++ or print $1 if /checkout:.*to (.+)/'"
+	sha = !git rev-parse "${1-HEAD}"
+	com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
+	# https://motemen.hatenablog.com/entry/2022/04/git-aliases
+	vacuum = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
+	graph = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
+	restore = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
+
+[fetch]
+	prune = true
+
+# [branch "master"]
+# 	pushRemote = no_push
+# [branch "main"]
+# 	pushRemote = no_push
+
+[diff]
+	submodule = log
+
+[push]
+	useForceIfIncludes = true
+
+[ghq]
+	user = no-yan
