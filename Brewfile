@@ -1,3 +1,4 @@
+# brew bundle　is not idempotent. Resulting build can be broken due to package updates.
 tap "hashicorp/tap"
 tap "heroku/brew"
 tap "homebrew/bundle"
