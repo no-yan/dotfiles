@@ -130,7 +130,7 @@ setopt AUTO_PUSHD
 
 # プロンプトカスタマイズ
 PROMPT="[%F{green}%~%f]%F{cyan}$vcs_info_msg_0_%f%F{yellow}$%f "$'\n'">  "
-RPROMPT="%F{cyan}<`git config user.name`>"
+# RPROMPT="%F{cyan}<`git config user.name`>"
 autoload -Uz vcs_info
 setopt prompt_subst;
 zstyle ':vcs_info:git:*' check-for-changes true
