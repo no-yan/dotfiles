@@ -49,3 +49,5 @@
 
 [ghq]
 	user = no-yan
+[core]
+	ignorecase = false
