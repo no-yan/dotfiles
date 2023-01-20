@@ -1,14 +1,10 @@
 #!/bin/zsh
 
-export NODE_OPTIONS="--max-old-space-size=10000"
 export PATH=/opt/homebrew/bin:$PATH
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export GODEBUG=asyncpreemptoff=1
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
-
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 
 fpath+=~/.zfunc
 # Homebrew: Configuring Completions in zsh
@@ -62,10 +58,6 @@ alias acc-s='acc s main.py -- --guess-python-interpreter pypy'
 # for online judge tools
 alias oj-t='oj t -c "pypy main.py"'
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-# export SDKMAN_DIR="/home/note/.sdkman"
-# [[ -s "/home/note/.sdkman/bin/sdkman-init.sh" ]] && source "/home/note/.sdkman/bin/sdkman-init.sh"
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 
@@ -112,33 +104,6 @@ function gignore() {
   curl -s -H "Accept: application/vnd.github.v3+json"  https://api.github.com/gitignore/templates/${templateType} | jq -r '.source' > .gitignore
 }
 
-# 補完候補を詰めて表示
-setopt list_packed
-
-# 補完候補一覧をカラー表示
-autoload colors
-zstyle ':completion:*' list-colors ''
-
-
-
-# ディレクトリスタック
-DIRSTACKSIZE=100
-setopt AUTO_PUSHD
-
-# git
-
-
-# プロンプトカスタマイズ
-PROMPT="[%F{green}%~%f]%F{cyan}$vcs_info_msg_0_%f%F{yellow}$%f "$'\n'">  "
-# RPROMPT="%F{cyan}<`git config user.name`>"
-autoload -Uz vcs_info
-setopt prompt_subst;
-zstyle ':vcs_info:git:*' check-for-changes true
-zstyle ':vcs_info:git:*' stagedstr "%F{magenta}!"
-zstyle ':vcs_info:git:*' unstagedstr "%F{yellow}+"
-zstyle ':vcs_info:*' formats "%F{cyan}%c%u[%b]%f"
-zstyle ':vcs_info:*' actionformats '[%b|%a]'
-precmd (){ 'vcs_info'; }
 
 unset env
 # end of git ssh setting
@@ -155,23 +120,6 @@ fi
 
 # python package manager
 export PATH="/Users/okamoto-wataru/.local/bin:$PATH"
-
-# _fzf_complete_git() {
-#     ARGS="$@"
-#     local branches
-#     branches=$(git branch -vv --all)
-#     if [[ $ARGS == 'git co'* ]]; then
-#         _fzf_complete --reverse --multi -- "$@" < <(
-#             echo $branches
-#         )
-#     else
-#         eval "zle ${fzf_default_completion:-expand-or-complete}"
-#     fi
-# }
-
-# _fzf_complete_git_post() {
-#     awk '{print $1}'
-# }
 
 # aws cli auto completion
 complete -C '/usr/local/bin/aws_completer' aws
@@ -191,3 +139,4 @@ export ESMETA_HOME="/Users/okamoto-wataru/ghq/github.com/es-meta/esmeta" # IMPOR
 export PATH="$ESMETA_HOME/bin:$PATH" # for executables `esmeta` and etc.
 source $ESMETA_HOME/.completion # for auto-completion
 
+eval source <(/opt/homebrew/bin/starship init zsh --print-full-init)
