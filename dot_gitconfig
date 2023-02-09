@@ -32,6 +32,7 @@
 	vacuum = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
 	graph = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
 	restore = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
+	stash-dry = stash show -p # or --name-only ?
 
 [fetch]
 	prune = true
