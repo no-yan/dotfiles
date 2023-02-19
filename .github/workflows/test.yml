@@ -1,0 +1,19 @@
+name: "Install Test"
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-links:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: "Installing on ${{ matrix.os }}"
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply no-yan
