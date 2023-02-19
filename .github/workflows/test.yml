@@ -14,3 +14,4 @@ jobs:
     steps:
       - name: "Install chezmoi and apply"
         run: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply no-yan
+      - run: brew list
