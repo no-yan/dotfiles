@@ -9,18 +9,8 @@ permissions:
   pull-requests: read
 
 jobs:
-  check-links:
-    runs-on: ubuntu-latest
+  mac:
+    runs-on: macos-latest
     steps:
-      # - name: "Install dependencies"
-      #   run: |
-      #     apt update && apt upgrade
-      #     apt install curl -y
-      #     apt-get install build-essential procps curl file git
-
-      # - name: "Install Brew"
-      #   run: |
-      #     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-      - name: "Install chezmoi and apply on ${{ matrix.os }}"
+      - name: "Install chezmoi and apply"
         run: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply no-yan
