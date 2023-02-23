@@ -13,5 +13,5 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: "Install chezmoi and apply"
-        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply no-yan
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin  init --apply no-yan
       - run: brew list
