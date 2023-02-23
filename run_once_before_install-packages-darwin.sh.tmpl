@@ -1,0 +1,21 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+set -e # -e: exit on error
+
+if [ ! "$(command -v brew)" ]; then
+  echo "Installing brew"
+  if [ "$(command -v curl)" ]; then
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+  else
+    echo "To install dotfiles, you must install curl." >&2
+    exit 1
+  fi
+else
+  chezmoi=chezmoi
+fi
+
+brew bundle --no-lock --file=/dev/stdin <<EOF
+brew "git"
+EOF
+{{ end -}}
