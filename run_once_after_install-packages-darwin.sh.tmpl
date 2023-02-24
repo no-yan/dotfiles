@@ -15,12 +15,14 @@ else
   chezmoi=chezmoi
 fi
 
+brew update
+
 if [[ $CI ]]; then
   echo "Disabling ssh setting."
   # CIでshh接続の鍵登録はしないので、httpsをそのまま使用する。
   config=$(git config --global --get url.git@github.com:.insteadof)
   git config --global --unset url.git@github.com:.insteadof
-  export HOMEBREW_BUNDLE_BREW_SKIP="go"
+  export HOMEBREW_BUNDLE_BREW_SKIP="go kreuzwerker/taps/m1-terraform-provider-helper"
 fi
 
 # caskroom/versionsで入れたものはbrew bundleでインストールできない
