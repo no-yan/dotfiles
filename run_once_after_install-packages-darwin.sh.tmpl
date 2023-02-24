@@ -20,7 +20,7 @@ if [[ $CI ]]; then
   # CIでshh接続の鍵登録はしないので、httpsをそのまま使用する。
   config=$(git config --global --get url.git@github.com:.insteadof)
   git config --global --unset url.git@github.com:.insteadof
-  HOMEBREW_BUNDLE_BREW_SKIP="go"
+  export HOMEBREW_BUNDLE_BREW_SKIP="go"
 fi
 
 # caskroom/versionsで入れたものはbrew bundleでインストールできない
