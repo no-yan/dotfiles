@@ -24,9 +24,9 @@ if [[ $CI ]]; then
 fi
 
 # caskroom/versionsで入れたものはbrew bundleでインストールできない
-# https://baqamore.hatenablog.com/entry/2015/06/16/210827
-brew tap caskroom/versions
-brew cask install google-chrome-canary
+# https://github.com/Homebrew/homebrew-cask-versions#usage
+brew tap homebrew/cask-versions
+brew install google-chrome-canary
 
 brew bundle --global --no-lock --no-upgrade
 
