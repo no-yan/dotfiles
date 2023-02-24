@@ -15,7 +15,7 @@ else
   chezmoi=chezmoi
 fi
 
-if [[ -v "${CI}" || "${CI}" ]]; then
+if [[ -v "${CI}" && "${CI}" ]]; then
   echo "Disabling ssh setting."
   # CIでshh接続の鍵登録はしないので、httpsをそのまま使用する。
   config=$(git config --global --get url.git@github.com:.insteadof)
