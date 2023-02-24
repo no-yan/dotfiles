@@ -15,7 +15,7 @@ else
   chezmoi=chezmoi
 fi
 
-brew update
+
 
 if [[ $CI ]]; then
   echo "Disabling ssh setting."
@@ -24,6 +24,8 @@ if [[ $CI ]]; then
   git config --global --unset url.git@github.com:.insteadof
   export HOMEBREW_BUNDLE_BREW_SKIP="go kreuzwerker/taps/m1-terraform-provider-helper"
 fi
+
+brew update
 
 # caskroom/versionsで入れたものはbrew bundleでインストールできない
 # https://github.com/Homebrew/homebrew-cask-versions#usage
