@@ -22,6 +22,11 @@ if [[ -v CI || CI == ture ]]; then
   git config --global --unset url.git@github.com:.insteadof
 fi
 
+# caskroom/versionsで入れたものはbrew bundleでインストールできない
+# https://baqamore.hatenablog.com/entry/2015/06/16/210827
+brew tap caskroom/versions
+brew cask install google-chrome-canary
+
 brew bundle --global --no-lock --no-upgrade
 
 if [[ -v CI && CI == ture ]]; then
