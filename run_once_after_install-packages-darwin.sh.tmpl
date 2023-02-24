@@ -15,7 +15,7 @@ else
   chezmoi=chezmoi
 fi
 
-if [[ -v "${CI}" && "${CI}" ]]; then
+if [[ $CI ]]; then
   echo "Disabling ssh setting."
   # CIでshh接続の鍵登録はしないので、httpsをそのまま使用する。
   config=$(git config --global --get url.git@github.com:.insteadof)
@@ -30,7 +30,7 @@ brew cask install google-chrome-canary
 
 brew bundle --global --no-lock --no-upgrade
 
-if [[ -v "$CI" && "$CI" ]]; then
+if [[ $CI ]]; then
   git config --global --set url.git@github.com:.insteadof "${config}"
   echo "Recovered ssh setting."
 fi
