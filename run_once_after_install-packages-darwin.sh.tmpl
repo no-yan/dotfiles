@@ -35,7 +35,7 @@ brew install google-chrome-canary
 brew bundle --global --no-lock --no-upgrade
 
 if [[ $CI ]]; then
-  git config --global --set url.git@github.com:.insteadof "${config}"
+  git config --global url.git@github.com:.insteadof "${config}"
   echo "Recovered ssh setting."
 fi
 
