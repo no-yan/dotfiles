@@ -52,3 +52,4 @@
 	user = no-yan
 [core]
 	ignorecase = false
+        editor = vim
