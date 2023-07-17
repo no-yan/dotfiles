@@ -133,13 +133,11 @@ if [ -f '/Users/okamoto-wataru/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/okamoto-wataru/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/okamoto-wataru/google-cloud-sdk/completion.zsh.inc'; fi
 
-# ESMeta
 if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
-  export ESMETA_HOME="~/ghq/github.com/es-meta/esmeta" # IMPORTANT!!!
-  export PATH="$ESMETA_HOME/bin:$PATH" # for executables `esmeta` and etc.
-  source $ESMETA_HOME/.completion # for auto-completion
+  export ESMETA_HOME=~/ghq/github.com/es-meta/esmeta
+  export PATH="$ESMETA_HOME/bin:$PATH"
+  source $ESMETA_HOME/.completion
 fi
-
 
 
 eval source <(/opt/homebrew/bin/starship init zsh --print-full-init)
