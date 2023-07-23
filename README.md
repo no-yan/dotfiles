@@ -13,3 +13,15 @@ asdf, zsh, brew, starship
 /bin/bash -c "$(curl -fsSL <https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh>)"
 chezmoi init --apply no-yan
 ```
+
+
+### Dotfilesの更新を定期的に確認する
+
+Cronでスクリプトを登録し、未反映の差分をチェックします。変更があった場合にはログが保存され、shellの読み込み時に表示されます。
+`crontab -e` で以下のコマンドを登録してください。
+
+```
+0 8  * * * ~/scripts/chezmoi/check-update.sh
+```
+
+
