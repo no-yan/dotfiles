@@ -21,6 +21,20 @@ fi
 # export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
 # export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
+# Show recent chezmoi updates that have not been applied.
+LOGFILE=~/scripts/chezmoi/check-update.log
+TIMEINTERVAL=86400 # 1day
+
+if [ -f "$LOGFILE" ]; then
+  CURRENTTIME=$(date +%s)
+  FILETIME=$(gstat -c %Y $LOGFILE)
+  TIMEDIFF=$(($CURRENTTIME - $FILETIME))
+
+  if [ $TIMEDIFF -lt $TIMEINTERVAL ]; then
+    echo "Recent changes in $LOGFILE:"
+    cat $LOGFILE
+  fi
+fi
 
 # Alias for Git
 alias gcb="git checkout -b"
@@ -32,6 +46,9 @@ alias currentBranch="git branch --contains"
 # Alias for zsh
 alias sz='source ~/.zshrc'
 alias vz='vi ~/.zshrc'
+# Alias for neovim
+alias nvc='nvim ~/.config/nvim/init.lua'
+
 function mkdircd() {
   mkdir $1
   cd $1
@@ -161,4 +178,5 @@ esac
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
    zcompile ~/.zshrc
 fi
+
 
