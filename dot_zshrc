@@ -45,9 +45,10 @@ alias currentBranch="git branch --contains"
 
 # Alias for zsh
 alias sz='source ~/.zshrc'
-alias vz='vi ~/.zshrc'
+alias vz='code ~/.zshrc'
+
 # Alias for neovim
-alias nvc='nvim ~/.config/nvim/init.lua'
+alias nvc='cd ~/.config/nvim && nvim init.lua'
 
 function mkdircd() {
   mkdir $1
