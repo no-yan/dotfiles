@@ -45,7 +45,7 @@ alias currentBranch="git branch --contains"
 
 # Alias for zsh
 alias sz='source ~/.zshrc'
-alias vz='code ~/.zshrc'
+alias vz='vi ~/.zshrc'
 
 # Alias for neovim
 alias nvc='cd ~/.config/nvim && nvim init.lua'
