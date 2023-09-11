@@ -33,6 +33,7 @@
 	graph = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
 	restore = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
 	stash-dry = stash show -p # or --name-only ?
+        changed = diff --name-only origin/main...HEAD
 
 [fetch]
 	prune = true
