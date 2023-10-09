@@ -1,9 +1,17 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
-DIR=~/.config/pnpm
-if [ ! -d "$DIR" ]; then
-    mkdir -p "$DIR"
-fi
+
+# ~/.config/pnpm/global.txt からパッケージリストを読み込む
+packages=($(cat ~/.config/pnpm/global.txt))
+
+# 各パッケージをグローバルにインストール
+for pkg in "${packages[@]}"; do
+    pnpm add -g $pkg
+done
+{{end -}}
+
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
 
 # List global package in pnpm with format: name@version
 pnpm list -g --json | jq -r '.[].dependencies | to_entries[] | "\(.key)@\(.value.version)"' > ~/.config/pnpm/global.txt
