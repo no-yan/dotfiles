@@ -1,6 +1,6 @@
-{{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash -xe
 
+{{ if eq .chezmoi.os "darwin" -}}
 # dot_config/pnpm/global.txt hash: {{ include "dot_config/pnpm/global.txt" | sha256sum }}
 echo "Installing global packages in pnpm"
 
@@ -14,9 +14,8 @@ for pkg in "${packages[@]}"; do
 done
 {{end -}}
 
-{{ if eq .chezmoi.os "darwin" -}}
-#!/bin/bash -xe
 
+{{ if eq .chezmoi.os "darwin" -}}
 # List global package in pnpm with format: name@version
 pnpm list -g --json | jq -r '.[].dependencies | to_entries[] | "\(.key)@\(.value.version)"' > ~/.config/pnpm/global.txt
 {{end -}}
