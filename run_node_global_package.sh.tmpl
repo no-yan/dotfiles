@@ -1,0 +1,10 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+DIR="~/.config/pnpm/global"
+if [ ! -d "$DIR" ]; then
+    mkdir -p "$DIR"
+fi
+
+# List global package in pnpm with format: name@version
+pnpm list -g --json | jq -r '.[].dependencies | to_entries[] | "\(.key)@\(.value.version)"' > ~/.config/pnpm/global
+{{end -}}
