@@ -1,5 +1,6 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
+# $HOME/.config/pnpm/global.txt hash: {{ include "$HOME/.config/pnpm/global.txt" | sha256sum }}
 echo "Installing global packages in pnpm"
 
 # ~/.config/pnpm/global.txt からパッケージリストを読み込む
