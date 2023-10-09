@@ -1,10 +1,12 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
+echo "Installing global packages in pnpm"
 
 # ~/.config/pnpm/global.txt からパッケージリストを読み込む
 packages=($(cat ~/.config/pnpm/global.txt))
 
 # 各パッケージをグローバルにインストール
+echo "package: ${packages}"
 for pkg in "${packages[@]}"; do
     pnpm add -g $pkg
 done
