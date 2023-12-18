@@ -181,3 +181,4 @@ if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
 fi
 
 
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
