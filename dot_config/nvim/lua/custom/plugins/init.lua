@@ -2,4 +2,12 @@
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
-return {}
+return {
+    {
+    -- インサートモードを抜ける時にIMEをOFFにする
+    "keaising/im-select.nvim",
+    config = function()
+        require("im_select").setup({})
+    end,
+    }
+}
