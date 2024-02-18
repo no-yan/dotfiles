@@ -106,6 +106,12 @@ function gignore() {
   curl -s -H "Accept: application/vnd.github.v3+json"  https://api.github.com/gitignore/templates/${templateType} | jq -r '.source' > .gitignore
 }
 
+## Terminal Logs
+HISTSIZE=10000
+SAVEHIST=10000
+setopt append_history
+setopt share_history
+setopt hist_ignore_all_dups
 
 unset env
 # end of git ssh setting
