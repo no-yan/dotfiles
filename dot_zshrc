@@ -65,14 +65,13 @@ alias oj-t='oj t -c "pypy main.py"'
 
 # https://qiita.com/kassy11/items/77456688a392ddb0b285
 function fzf-ghq() {
-  local selected_dir=$(ghq list | fzf --prompt="Git Repos > " --preview "batcat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
+  local src=$(ghq list | fzf --prompt="Git Repos > " --preview "batcat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
 
-  if [ -n "$selected_dir" ]; then
-    BUFFER="code $(ghq root)/${selected_dir}"
+  if [ -n "$src" ]; then
+    BUFFER="cd $(ghq root)/${src}"
     zle accept-line
   fi
-
-  zle reset-prompt
+  zle -R -c
 }
 
 zle -N fzf-ghq
