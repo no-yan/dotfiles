@@ -60,6 +60,10 @@ alias acc-s='acc s main.py -- --guess-python-interpreter pypy'
 # for online judge tools
 alias oj-t='oj t -c "pypy main.py"'
 
+# Use AC-Library
+# https://atcoder.github.io/ac-library/document_ja/appendix.html
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/ghq/github.com/atcoder/ac-library
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 
