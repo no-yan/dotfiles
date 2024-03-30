@@ -337,9 +337,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- [[ Autoclose function body ]]
-vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true, silent = true })
-
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
