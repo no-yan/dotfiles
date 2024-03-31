@@ -7,7 +7,9 @@ return {
         "MunifTanjim/nui.nvim",
     },
     config = function()
-        require('neo-tree').setup {}
+        require('neo-tree').setup {
+            close_if_last_window = true,
+        }
         vim.keymap.set('n', '<leader>-', function()
                 local reveal_file = vim.fn.expand('%:p')
                 if (reveal_file == '') then
