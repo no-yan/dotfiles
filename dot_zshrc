@@ -33,6 +33,7 @@ alias vz='nvim  ~/.zshrc'
 
 # Alias for neovim
 alias nvc='cd ~/.config/nvim && nvim init.lua'
+alias v='nvim'
 
 function mkdircd() {
   mkdir $1
