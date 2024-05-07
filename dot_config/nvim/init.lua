@@ -267,6 +267,7 @@ require('lazy').setup({
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   { import = 'custom.plugins' },
+  { import = 'custom.essentials' },
 }, {})
 
 -- [[ Setting options ]]
@@ -326,6 +327,17 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+-- Auto Expand %% to current directory
+local function autoExpandCWD()
+  if [[getcmdtype() == ':']] then
+    return vim.fn.expand('%:h') .. '/'
+  end
+  return '%%'
+end
+
+vim.keymap.set('c', '%%', autoExpandCWD,
+  { expr = true, noremap = true })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -571,7 +583,13 @@ require('mason-lspconfig').setup()
 --  define the property 'filetypes' to the map in question.
 local servers = {
   clangd = {},
-  gopls = {},
+  gopls = {
+    analyses = {
+      unusedparams = true,
+    },
+    staticcheck = true,
+    gofumpt = true,
+  },
   -- pyright = {},
   -- rust_analyzer = {},
   tsserver = {},

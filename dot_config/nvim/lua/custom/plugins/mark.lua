@@ -19,7 +19,8 @@ return {
                     "NvimTree",
                     "neo-tree",
                     "fugitive",
-                    "help"
+                    "help",
+                    "",
                 }
                 -- Ignore specified file types
                 for _, ft in ipairs(excluded_filetypes) do
