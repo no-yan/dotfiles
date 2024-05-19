@@ -267,7 +267,6 @@ require('lazy').setup({
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   { import = 'custom.plugins' },
-  { import = 'custom.essentials' },
 }, {})
 
 -- [[ Setting options ]]
@@ -311,6 +310,10 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+
+-- Custom build options forr AtCoder
+vim.opt.makeprg =
+'g++ -Wall -Wextra -pedantic -std=c++20 -O2 -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2   main.cpp && oj t'
 
 -- [[ Basic Keymaps ]]
 
@@ -681,6 +684,15 @@ cmp.setup {
     { name = 'path' },
   },
 }
+
+-- ノーマルモードで <C-s> を保存にマッピング
+vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap = true, silent = true })
+
+-- インサートモードで <C-s> を保存にマッピング
+vim.api.nvim_set_keymap('i', '<C-s>', '<Esc>:w<CR>a', { noremap = true, silent = true })
+
+-- ビジュアルモードで <C-s> を保存にマッピング
+vim.api.nvim_set_keymap('v', '<C-s>', '<Esc>:w<CR>', { noremap = true, silent = true })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
