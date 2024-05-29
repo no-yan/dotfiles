@@ -901,6 +901,7 @@ require('lazy').setup({
         },
       },
     },
+
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 
