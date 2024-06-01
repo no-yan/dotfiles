@@ -585,6 +585,9 @@ require('lazy').setup({
         html = { filetypes = { 'html', 'twig', 'hbs' } },
         --
 
+        typos_lsp = {
+          filetypes = { 'go' },
+        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
