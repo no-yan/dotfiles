@@ -974,3 +974,7 @@ require('lazy').setup({
 require 'custom.options.atcoder'
 
 -- [[ Custom Keymap ]]
+require 'custom.keymap'
+
+-- [[ Auto Cmd ]]
+require 'custom.autocmd.go'
