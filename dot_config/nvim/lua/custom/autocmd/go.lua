@@ -1,3 +1,4 @@
+-- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-imports
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = '*.go',
   callback = function()
