@@ -502,6 +502,7 @@ require('lazy').setup({
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
+          vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, { desc = 'Signature Help' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -692,12 +693,13 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+              require('luasnip.loaders.from_vscode').lazy_load { paths = { './lua/custom/snippets' } }
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -859,6 +861,15 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<c-space>',
+          node_incremental = '<c-space>',
+          scope_incremental = '<c-s>',
+          node_decremental = '<M-space>',
+        },
+      },
       textobjects = {
         select = {
           enable = true,
@@ -933,7 +944,7 @@ require('lazy').setup({
   --
   require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  require 'kickstart.plugins.lint',
+  -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
@@ -975,6 +986,5 @@ require 'custom.options.atcoder'
 
 -- [[ Custom Keymap ]]
 require 'custom.keymap'
-
 -- [[ Auto Cmd ]]
 require 'custom.autocmd.go'

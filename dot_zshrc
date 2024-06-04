@@ -4,6 +4,7 @@ export PATH=/opt/homebrew/bin:$PATH
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export GODEBUG=asyncpreemptoff=1
+export EDITOR=nvim
 
 fpath+=~/.zfunc
 # Homebrew: Configuring Completions in zsh
