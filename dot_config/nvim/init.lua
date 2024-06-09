@@ -568,11 +568,29 @@ require('lazy').setup({
       local servers = {
         clangd = {},
         gopls = {
-          analyses = {
-            unusedparams = true,
+          settings = {
+            gopls = {
+              analyses = {
+                unusedparams = true,
+              },
+              staticcheck = true,
+              gofumpt = true,
+              -- hints = {
+              --   assignVariableTypes = true,
+              --   compositeLiteralFields = true,
+              --   compositeLiteralTypes = true,
+              --   constantValues = true,
+              --   functionTypeParameters = true,
+              --   parameterNames = true,
+              --   rangeVariableTypes = true,
+              -- },
+              ['ui.inlayhint.hints'] = {
+                compositeLiteralFields = true,
+                constantValues = true,
+                parameterNames = true,
+              },
+            },
           },
-          staticcheck = true,
-          gofumpt = true,
         },
         -- pyright = {},
         -- rust_analyzer = {},
@@ -583,7 +601,7 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {},
-        html = { filetypes = { 'html', 'twig', 'hbs' } },
+        -- html = { filetypes = { 'html', 'twig', 'hbs' } },
         --
 
         typos_lsp = {

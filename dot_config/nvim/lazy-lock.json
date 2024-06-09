@@ -9,7 +9,7 @@
   "friendly-snippets": { "branch": "main", "commit": "69a2c1675b66e002799f5eef803b87a12f593049" },
   "gitsigns.nvim": { "branch": "main", "commit": "078041e9d060a386b0c9d3a8c7a7b019a35d3fb0" },
   "hardtime.nvim": { "branch": "main", "commit": "21b0f9146198bb43fbc9f5ec66c8af3234f278ed" },
-  "harpoon": { "branch": "harpoon2", "commit": "da326d0438ac68dee9b6b62a734be940a8bd8405" },
+  "harpoon": { "branch": "harpoon2", "commit": "0378a6c428a0bed6a2781d459d7943843f374bce" },
   "im-select.nvim": { "branch": "master", "commit": "ca1aebb8f5c8a0342ae99a0fcc8ebc49b5f2201e" },
   "lazy.nvim": { "branch": "main", "commit": "d37a76b87137c777f3d778ed03729d7f332a85f0" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "9dfcf2036c223920826140f0151d929a43f9eceb" },
@@ -36,6 +36,7 @@
   "todo-comments.nvim": { "branch": "main", "commit": "e1549807066947818113a7d7ed48f637e49620d3" },
   "toggleterm.nvim": { "branch": "main", "commit": "193786e0371e3286d3bc9aa0079da1cd41beaa62" },
   "tokyonight.nvim": { "branch": "main", "commit": "b9b494fa7f7bbf2fe0747b47fa290fb7a4eddcc7" },
+  "vim-go": { "branch": "master", "commit": "feef9b31507f8e942bcd21f9e1f22d587c83c72d" },
   "vim-sleuth": { "branch": "master", "commit": "1cc4557420f215d02c4d2645a748a816c220e99b" },
   "which-key.nvim": { "branch": "main", "commit": "4433e5ec9a507e5097571ed55c02ea9658fb268a" }
 }
