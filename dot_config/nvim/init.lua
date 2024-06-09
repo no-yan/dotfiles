@@ -546,6 +546,9 @@ require('lazy').setup({
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
             end, '[T]oggle Inlay [H]ints')
           end
+
+          -- Enable inlay hints by default
+          vim.lsp.inlay_hint.enable()
         end,
       })
 
