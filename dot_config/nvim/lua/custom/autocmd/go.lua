@@ -21,3 +21,10 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     vim.lsp.buf.format { async = false }
   end,
 })
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*.go',
+  callback = function()
+    vim.cmd 'compiler! go'
+  end,
+})
