@@ -171,13 +171,11 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# Auto compile .zshrc
-if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
-   zcompile ~/.zshrc
-fi
-
 
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 eval "$(/opt/homebrew/bin/mise activate zsh)"
 
-eval "$(zoxide init zsh)"
+# Auto compile .zshrc
+if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
+   zcompile ~/.zshrc
+fi
