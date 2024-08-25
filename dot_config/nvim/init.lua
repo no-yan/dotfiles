@@ -166,7 +166,8 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
+vim.keymap.set('n', '[q', ':cprevious<CR>', { desc = 'Go to previouos [Q]uickfix' })
+vim.keymap.set('n', ']q', ':cnext<CR>', { desc = 'Go to next [Q]uickfix' })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -280,19 +281,35 @@ require('lazy').setup({
       require('which-key').setup()
 
       -- Document existing key chains
-      require('which-key').register {
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-        ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-        ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+      local wk = require 'which-key'
+      wk.add {
+        --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
+        --   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+        --   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
+        --   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+        --   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+        --   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
+        --   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+        { '<leader>c', group = '[C]ode' },
+        { '<leader>c_', hidden = true },
+        { '<leader>d', group = '[D]ocument' },
+        { '<leader>d_', hidden = true },
+        { '<leader>h', group = 'Git [H]unk' },
+        { '<leader>h_', hidden = true },
+        { '<leader>r', group = '[R]ename' },
+        { '<leader>r_', hidden = true },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>s_', hidden = true },
+        { '<leader>t', group = '[T]oggle' },
+        { '<leader>t_', hidden = true },
+        { '<leader>w', group = '[W]orkspace' },
+        { '<leader>w_', hidden = true },
       }
       -- visual mode
-      require('which-key').register({
-        ['<leader>h'] = { 'Git [H]unk' },
-      }, { mode = 'v' })
+      wk.add {
+        mode = 'v',
+        { '<leader>h', group = 'Git [H]unk' },
+      }
     end,
   },
 
@@ -384,6 +401,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>sc', builtin.lsp_incoming_calls, { desc = '[S]earch [C]all' })
       vim.keymap.set('n', '<leader>so', builtin.lsp_outgoing_calls, { desc = '[S]earch [O]utgoing Call' })
+      vim.keymap.set('n', '<leader>s:', builtin.command_history, { desc = '[S]earch Command History' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -571,7 +589,12 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        clangd = {
+          cmd = { 'clangd', '--background-index', '--clang-tidy', '--log=verbose' },
+          initialization_options = {
+            fallback_flags = { '-std=c++11', '-static', '-g' },
+          },
+        },
         gopls = {
           settings = {
             gopls = {
@@ -594,6 +617,7 @@ require('lazy').setup({
                 constantValues = true,
                 parameterNames = true,
               },
+              ['ui.completion.usePlaceholders'] = true,
             },
           },
         },
@@ -606,7 +630,8 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {},
-        -- html = { filetypes = { 'html', 'twig', 'hbs' } },
+        html = { filetypes = { 'html', 'twig', 'hbs' } },
+        tailwindcss = {},
         --
 
         typos_lsp = {
