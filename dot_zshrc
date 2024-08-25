@@ -1,10 +1,23 @@
 #!/bin/zsh
 
-export PATH=$(brew --prefix)/bin:$PATH
+if [[ "$(uname)" == "Darwin" ]]; then
+  # macOSの場合
+  if [[ -d "/opt/homebrew" ]]; then
+    export PATH="/opt/homebrew/bin:$PATH"
+  elif [[ -d "/usr/local" ]]; then
+    export PATH="/usr/local/bin:$PATH"
+  fi
+elif [[ "$(uname)" == "Linux" && -n "$(grep -i microsoft /proc/version 2>/dev/null)" ]]; then
+  # WSLの場合
+  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+fi
+
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export GODEBUG=asyncpreemptoff=1
 export EDITOR=nvim
+# export PATH=$PATH:$HOME/go/goroot/bin
+# export PATH=$PATH:$HOME/go/goroot
 
 fpath+=~/.zfunc
 # Homebrew: Configuring Completions in zsh
