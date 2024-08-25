@@ -6,7 +6,7 @@
 				"language": [
 					"go"
 				],
-				"path": "./go.json"
+				"path": "./_go.json"
 			}
 		]
 	}
