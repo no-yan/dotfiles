@@ -19,6 +19,9 @@ export EDITOR=nvim
 # export PATH=$PATH:$HOME/go/goroot/bin
 # export PATH=$PATH:$HOME/go/goroot
 
+# Cache compinit
+zstyle ':completion:*' rehash true
+
 fpath+=~/.zfunc
 # Homebrew: Configuring Completions in zsh
 # https://docs.brew.sh/Sell-Completion#configuring-completions-in-zsh
