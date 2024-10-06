@@ -1041,3 +1041,10 @@ require 'custom.options.atcoder'
 require 'custom.keymap'
 -- [[ Auto Cmd ]]
 require 'custom.autocmd.go'
+require 'custom.autocmd.quickfix'
+
+-- Neovimの内部エンコーディングをUTF-8に設定
+vim.opt.encoding = 'utf-8'
+
+-- ファイルのエンコーディングをUTF-8に設定
+vim.opt.fileencoding = 'utf-8'
