@@ -425,6 +425,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- Search for current buffer directory
+      vim.keymap.set('n', '<leader>sd', function()
+        builtin.find_files { cwd = vim.fn.expand '%:p:h' }
+      end, { desc = '[S]earch Files in current buffer [D]irectory' })
     end,
   },
 
