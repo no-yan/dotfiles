@@ -627,7 +627,149 @@ require('lazy').setup({
           },
         },
         -- pyright = {},
-        -- rust_analyzer = {},
+
+        rust_analyzer = {
+          cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
+          settings = {
+            ['rust-analyzer'] = {
+              checkOnSave = {
+                command = 'clippy',
+                extraArgs = { '--profile', 'rust-analyzer' },
+              },
+              completion = {
+                postfix = {
+                  enable = true,
+                },
+                snippets = {
+                  custom = {
+                    ['Arc::new'] = {
+                      postfix = 'arc',
+                      body = 'Arc::new(${receiver})',
+                      requires = 'std::sync::Arc',
+                      description = 'Put the expression into an `Arc`',
+                      scope = 'expr',
+                    },
+                    ['Rc::new'] = {
+                      postfix = 'rc',
+                      body = 'Rc::new(${receiver})',
+                      requires = 'std::rc::Rc',
+                      description = 'Put the expression into an `Rc`',
+                      scope = 'expr',
+                    },
+                    ['Box::pin'] = {
+                      postfix = 'pinbox',
+                      body = 'Box::pin(${receiver})',
+                      requires = 'std::boxed::Box',
+                      description = 'Put the expression into a pinned `Box`',
+                      scope = 'expr',
+                    },
+                    ['Ok'] = {
+                      postfix = 'ok',
+                      body = 'Ok(${receiver})',
+                      description = 'Wrap the expression in a `Result::Ok`',
+                      scope = 'expr',
+                    },
+                    ['Err'] = {
+                      postfix = 'err',
+                      body = 'Err(${receiver})',
+                      description = 'Wrap the expression in a `Result::Err`',
+                      scope = 'expr',
+                    },
+                    ['Some'] = {
+                      postfix = 'some',
+                      body = 'Some(${receiver})',
+                      description = 'Wrap the expression in an `Option::Some`',
+                      scope = 'expr',
+                    },
+                    print = {
+                      postfix = 'println',
+                      body = {
+                        'println!("{}", ${receiver});',
+                      },
+                      scope = 'expr',
+                    },
+                    debug = {
+                      postfix = 'debug',
+                      body = {
+                        'println!("{:?}", ${receiver});',
+                      },
+                      scope = 'expr',
+                    },
+                  },
+                },
+              },
+              inlayHints = {
+                bindingModeHints = {
+                  enable = false,
+                },
+                chainingHints = {
+                  enable = true,
+                },
+                closingBraceHints = {
+                  enable = true,
+                  minLines = 0,
+                },
+                closureCaptureHints = {
+                  enable = false,
+                },
+                closureReturnTypeHints = {
+                  enable = 'if_always',
+                },
+                expressionAdjustmentHints = {
+                  enable = 'never',
+                },
+                genericParameterHints = {
+                  const = {
+                    enable = true,
+                  },
+                  lifetime = {
+                    enable = false,
+                  },
+                  type = {
+                    enable = false,
+                  },
+                },
+                implicitDrops = {
+                  enable = false,
+                },
+                parameterHints = {
+                  enable = true,
+                },
+                reborrowHints = {
+                  enable = 'never',
+                },
+                typeHints = {
+                  enable = true,
+                  hideClosureInitialization = false,
+                  hideNamedConstructor = false,
+                },
+              },
+              imports = {
+                granularity = {
+                  group = 'module',
+                  enforce = true,
+                },
+                prefix = 'self',
+              },
+              cargo = {
+                buildScripts = {
+                  enable = true,
+                },
+                autoreload = true,
+              },
+              procMacro = {
+                enable = true,
+              },
+              diagnostics = {
+                enable = true,
+                disabled = {},
+                styleLints = {
+                  enable = true,
+                },
+              },
+            },
+          },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -640,7 +782,7 @@ require('lazy').setup({
         --
 
         typos_lsp = {
-          filetypes = { 'go' },
+          filetypes = { 'go', 'rust' },
         },
         lua_ls = {
           -- cmd = {...},
@@ -671,6 +813,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'rust-analyzer',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -903,7 +1046,7 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'rust' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1042,6 +1185,7 @@ require 'custom.keymap'
 -- [[ Auto Cmd ]]
 require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
+require 'custom.autocmd.fold'
 
 -- Neovimの内部エンコーディングをUTF-8に設定
 vim.opt.encoding = 'utf-8'
