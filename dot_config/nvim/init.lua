@@ -992,10 +992,20 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+      -- vim.g.tokyonight_colors = { fg_gutter = '#707cb2', comment = '#709db2', dark5 = '#709db2' }
+
+      -- vim.g.tokyonight_colors = { fg_gutter = '#707cb2', comment = '#709db2', dark5 = '#709db2' }
+
       vim.cmd.colorscheme 'tokyonight-night'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
+      vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#778899' })
+      vim.api.nvim_set_hl(0, 'LineNr', { fg = 'white', bold = true })
+      vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#778899' })
+      -- vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#707cb2' })
+      -- vim.api.nvim_set_hl(0, 'LineNr', { fg = 'yellow' })
+      -- vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#707cb2' })
     end,
   },
 
