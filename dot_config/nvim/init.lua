@@ -574,6 +574,19 @@ require('lazy').setup({
 
           -- Enable inlay hints by default
           vim.lsp.inlay_hint.enable()
+
+          -- Set updatetime for CursorHold
+          -- 300ms of no cursor movement to trigger CursorHold
+          vim.opt.updatetime = 100
+
+          -- Show diagnostic popup on cursor hover
+          local diag_float_grp = vim.api.nvim_create_augroup('DiagnosticFloat', { clear = true })
+          vim.api.nvim_create_autocmd('CursorHold', {
+            callback = function()
+              vim.diagnostic.open_float(nil, { focusable = false })
+            end,
+            group = diag_float_grp,
+          })
         end,
       })
 
@@ -691,7 +704,7 @@ require('lazy').setup({
                     debug = {
                       postfix = 'debug',
                       body = {
-                        'println!("{:?}", ${receiver});',
+                        'dbg!(${receiver});',
                       },
                       scope = 'expr',
                     },
@@ -813,7 +826,6 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'rust-analyzer',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
