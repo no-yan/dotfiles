@@ -1,93 +1,115 @@
 #!/bin/zsh
 
-if [[ "$(uname)" == "Darwin" ]]; then
-  # macOSの場合
-  if [[ -d "/opt/homebrew" ]]; then
-    export PATH="/opt/homebrew/bin:$PATH"
-  elif [[ -d "/usr/local" ]]; then
-    export PATH="/usr/local/bin:$PATH"
+# Setup OS specific paths
+setup_path() {
+  if [[ "$(uname)" == "Darwin" ]]; then
+    # Mac OS
+    [[ -d "/opt/homebrew" ]] && export PATH="/opt/homebrew/bin:$PATH"
+    [[ -d "/usr/local" ]] && export PATH="/usr/local/bin:$PATH"
+  elif [[ "$(uname)" == "Linux" && -n "$(grep -i microsoft /proc/version 2>/dev/null)" ]]; then
+    # WSL
+    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
   fi
-elif [[ "$(uname)" == "Linux" && -n "$(grep -i microsoft /proc/version 2>/dev/null)" ]]; then
-  # WSLの場合
-  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-fi
+}
+setup_path
 
+
+# Homebrew setting and completions
+setup_homebrew() {
+  # https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
+  if type brew &>/dev/null
+  then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+    autoload -Uz compinit
+    compinit
+  fi
+}
+setup_homebrew
+
+
+# ========================================
+# Environment variable
+# ========================================
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export GODEBUG=asyncpreemptoff=1
 export EDITOR=nvim
-# export PATH=$PATH:$HOME/go/goroot/bin
-# export PATH=$PATH:$HOME/go/goroot
 
-# Cache compinit
-zstyle ':completion:*' rehash true
+# AtCoder Library
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/ghq/github.com/atcoder/ac-library
 
-fpath+=~/.zfunc
-# Homebrew: Configuring Completions in zsh
-# https://docs.brew.sh/Sell-Completion#configuring-completions-in-zsh
-if type brew &>/dev/null
-then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-
-  autoload -Uz compinit
-  compinit
+if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
+  export ESMETA_HOME=~/ghq/github.com/es-meta/esmeta
+  export PATH="$ESMETA_HOME/bin:$PATH"
 fi
 
-# llvm
-# export LDFLAGS="-L$(brew --prefix)/opt/llvm/lib"
-# export CPPFLAGS="-I$(brew --prefix)/opt/llvm/include"
 
-# Alias for Git
+# ========================================
+# PATH
+# ========================================
+# brew
+export PATH="$(brew --prefix)/sbin:$PATH"
+# LLVM
+export PATH="$(brew --prefix)/opt/llvm/bin:$PATH"
+# Openjdk
+export PATH="$(brew --prefix)/opt/openjdk/bin:$PATH"
+# curl
+export PATH="$(brew --prefix)/opt/curl/bin:$PATH"
+# Standard ML
+export PATH="/usr/local/smlnj/bin:$PATH"
+# Python package manager
+export PATH="~/.local/bin:$PATH"
+# Yarn
+export PATH="$PATH:$HOME/.yarn/bin"
+
+# pnpm
+export PNPM_HOME="${HOME}/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# gcloud
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+
+
+# ========================================
+# Alias
+# ========================================
+# Git aliases
 alias gcb="git checkout -b"
 alias gcm="git commit -m"
 alias gal='git add -A'
 alias gp="git push"
 alias currentBranch="git branch --contains"
 
-# Alias for zsh
+# Zsh aliases
 alias sz='source ~/.zshrc'
 alias vz='nvim  ~/.zshrc'
 
-# Alias for neovim
+# Neovim aliases
 alias nvc='cd ~/.config/nvim && nvim init.lua'
 alias v='nvim'
 alias vim='nvim'
 
-function mkdircd() {
-  mkdir $1
-  cd $1
-}
-
-# Alias for VS code
-# Make `cd` from a vscode terminal go to the workspace root
-# Assume the following is in vscode settings:
-# "terminal.integrated.env.linux":  {"VSCODE_WS": "${workspaceFolder}"},
-# "terminal.integrated.env.windows":{"VSCODE_WS": "${workspaceFolder}"},
-# When in filemode / not in a workspace, `VSCODE_WS` is set to the literal `${workspaceFolder}` so we check and ignore that
-function ws() {
-  if [ -n ${VSCODE_WS} ] ; then
-      cd "${VSCODE_WS}"
-  fi
-}
-
-# Alias for yarn workspacee
+# Other aliases
 alias yaw="yarn workspace"
 
-# Atcoder
-# for Atcoder-cli
+# Atcoder aliases
 alias acc-s='acc s main.py -- --guess-python-interpreter pypy'
-# for online judge tools
-alias oj-t='oj t -c "pypy main.py"'
-
-# Use AC-Library
+alias oj-t='oj t -c "pypy main.py"' # for online judge tools
 # https://atcoder.github.io/ac-library/document_ja/appendix.html
-export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/ghq/github.com/atcoder/ac-library
 
-[ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+alias pn=pnpm
 
 
+# ========================================
+# Function definition
+# ========================================
+# Select existing repository and move
+fzf-ghq() {
 # https://qiita.com/kassy11/items/77456688a392ddb0b285
-function fzf-ghq() {
   local src=$(ghq list | fzf --prompt="Git Repos > " --preview "batcat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
 
   if [ -n "$src" ]; then
@@ -100,24 +122,21 @@ function fzf-ghq() {
 zle -N fzf-ghq
 bindkey "^g" fzf-ghq
 
-# create GitHub repo, then open in vscode
-function ghcr() {
- gh repo create $argv
- ghq get ${argv[1]}
- code $(ghq list --full-path -e ${argv[1]})
-}
-
-function ghget() {
+# Create a new GitHub repo and open in VS Code
+ghcr() {
+  gh repo create $argv
+  ghq get ${argv[1]}
   code $(ghq list --full-path -e ${argv[1]})
 }
 
-alias ghcd='cd $(ghq list --full-path | fzf)'
+# Open an existing repo in VS Code
+ghget() {
+  code $(ghq list --full-path -e ${argv[1]})
+}
 
-# .gitignore
 # Create .gitignore Template from github/gitignore
 # If no specific language is given, all templates will be displayed
-
-function gignore() {
+gignore() {
   local templateType
 
   if [ $# = 0 ]; then
@@ -128,6 +147,42 @@ function gignore() {
   curl -s -H "Accept: application/vnd.github.v3+json"  https://api.github.com/gitignore/templates/${templateType} | jq -r '.source' > .gitignore
 }
 
+
+# ========================================
+# Completion
+# ========================================
+# Cache compinit
+zstyle ':completion:*' rehash true
+
+# fzf
+[ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+
+# tabtab
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+
+
+# bash compatible completion
+autoload -U +X bashcompinit && bashcompinit
+
+# terraform
+complete -o nospace -C $(brew --prefix)/bin/terraform terraform
+complete -o nospace -C $(brew --prefix)/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
+
+# AWS
+complete -C '/usr/local/bin/aws_completer' aws
+
+# gcloud
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+
+# ESMeta
+if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
+  source $ESMETA_HOME/.completion
+fi
+
+
+# ========================================
+# Misc
+# ========================================
 ## Terminal Logs
 HISTSIZE=10000
 SAVEHIST=10000
@@ -135,63 +190,18 @@ setopt append_history
 setopt share_history
 setopt hist_ignore_all_dups
 
-unset env
-# end of git ssh setting
-export PATH="$(brew --prefix)/opt/openjdk/bin:$PATH"
-
-# smlnj i.e. Standard ML
-export PATH="/usr/local/smlnj/bin:$PATH"
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C $(brew --prefix)/bin/terraform terraform
-
+# iterm2 shell integration
 if test -e "${HOME}/.iterm2_shell_integration.zsh";
-  then source "${HOME}/.iterm2_shell_integration.zsh"
+then source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
-# python package manager
-export PATH="~/.local/bin:$PATH"
-
-# aws cli auto completion
-complete -C '/usr/local/bin/aws_completer' aws
-
-complete -o nospace -C $(brew --prefix)/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
-export PATH="$(brew --prefix)/opt/llvm/bin:$PATH"
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
-
-if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
-  export ESMETA_HOME=~/ghq/github.com/es-meta/esmeta
-  export PATH="$ESMETA_HOME/bin:$PATH"
-  source $ESMETA_HOME/.completion
-fi
-
-
+# Starship prompt
 eval source <($(brew --prefix)/bin/starship init zsh --print-full-init)
-export PATH="$(brew --prefix)/sbin:$PATH"
-export PATH="$PATH:$HOME/.yarn/bin"
-alias pn=pnpm
 
-# tabtab source for packages
-# uninstall by removing these lines
-[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
-
-# pnpm
-export PNPM_HOME="${HOME}/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-
-export PATH="$(brew --prefix)/opt/curl/bin:$PATH"
+# Mise
 eval "$($(brew --prefix)/bin/mise activate zsh)"
 
 # Auto compile .zshrc
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
-   zcompile ~/.zshrc
+  zcompile ~/.zshrc
 fi
