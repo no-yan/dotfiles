@@ -649,6 +649,9 @@ require('lazy').setup({
                 command = 'clippy',
                 extraArgs = { '--profile', 'rust-analyzer' },
               },
+              check = {
+                workspace = 'false',
+              },
               completion = {
                 postfix = {
                   enable = true,
