@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# To propile performance, un-commnet the line below.
+# zmodload zsh/zprof
+
 # Setup OS specific paths
 setup_path() {
   if [[ "$(uname)" == "Darwin" ]]; then
@@ -19,10 +22,11 @@ setup_homebrew() {
   # https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
   if type brew &>/dev/null
   then
-    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-
-    autoload -Uz compinit
-    compinit
+    if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
+      FPATH="/opt/homebrew/share/zsh/site-functions:${FPATH}"
+    elif [[ -d "/usr/local/share/zsh/site-functions" ]]; then
+      FPATH="/usr/local/share/zsh/site-functions:${FPATH}"
+    fi   
   fi
 }
 setup_homebrew
@@ -154,30 +158,42 @@ gignore() {
 # Cache compinit
 zstyle ':completion:*' rehash true
 
-# fzf
-[ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+autoload -Uz compinit
 
-# tabtab
-[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+# 初めて補完が必要になった時に `compinit` を実行
+zsh_compinit_init=false
+zshaddhistory() {
+  if [[ $zsh_compinit_init == false ]]; then
+    compinit
+    zsh_compinit_init=true
+
+    # fzf
+    [ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+
+    # tabtab
+    [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
 
-# bash compatible completion
-autoload -U +X bashcompinit && bashcompinit
+    # bash compatible completion
+    autoload -U +X bashcompinit && bashcompinit
 
-# terraform
-complete -o nospace -C $(brew --prefix)/bin/terraform terraform
-complete -o nospace -C $(brew --prefix)/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
+    # terraform
+    complete -o nospace -C $(brew --prefix)/bin/terraform terraform
+    complete -o nospace -C $(brew --prefix)/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
 
-# AWS
-complete -C '/usr/local/bin/aws_completer' aws
+    # AWS
+    complete -C '/usr/local/bin/aws_completer' aws
 
-# gcloud
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+    # gcloud
+    if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
-# ESMeta
-if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
-  source $ESMETA_HOME/.completion
-fi
+    # ESMeta
+    if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
+      source $ESMETA_HOME/.completion
+    fi
+
+  fi
+}
 
 
 # ========================================
@@ -205,3 +221,6 @@ eval "$($(brew --prefix)/bin/mise activate zsh)"
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
   zcompile ~/.zshrc
 fi
+
+# To propile performance, un-commnet the line below.
+# zprof
