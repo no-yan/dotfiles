@@ -12,10 +12,28 @@
 [credential "https://gist.github.com"]
 	helper = !/opt/homebrew/bin/gh auth git-credential
 
+[includeIf "gitdir:~/ghq/git.dmm.com/"]
+	path = ~/.gitconfig_dmmep
+
+
+[core]
+	ignorecase = false
+	editor = nvim
+	pager = delta
 [init]
 	defaultBranch = main
-[includeIf "gitdir:~/ghq/git.dmm.com/"]
-   path = ~/.gitconfig_dmmep
+[branch]
+	sort = -committerdate
+[commit]
+	gpgsign = true
+[fetch]
+	prune = true
+[diff]
+	submodule = log
+[push]
+	useForceIfIncludes = true
+[gpg]
+	format = ssh
 
 [alias]
 	# https://motemen.hatenablog.com/entry/2022/04/git-aliases
@@ -35,63 +53,30 @@
 	sha = !git rev-parse "${1-HEAD}"
 	vacuum = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
 	wip = commit -m 'wip'
-        changed = diff --name-only origin/main...HEAD
-
-[fetch]
-	prune = true
-
-# [branch "master"]
-# 	pushRemote = no_push
-# [branch "main"]
-# 	pushRemote = no_push
-
-[diff]
-	submodule = log
-
-[push]
-	useForceIfIncludes = true
+	changed = diff --name-only origin/main...HEAD
 
 [ghq]
 	user = no-yan
 
-[core]
-	ignorecase = false
-        editor = nvim
-	
-[gpg]
-	format = ssh
-
-[branch]
-	sort = -committerdate
-
-[core]
-    pager = delta
-
+# Delta
 [interactive]
-    diffFilter = delta --color-only
-
+	diffFilter = delta --color-only
 [delta]
-    navigate = true    # use n and N to move between diff sections
-    hyperlinks = true
-    # delta detects terminal colors automatically; set one of these to disable auto-detection
-    # dark = true
-    # light = true
+	navigate = true    # use n and N to move between diff sections
+	hyperlinks = true
 
 [delta "interactive"]
-    keep-plus-minus-markers = false
+	keep-plus-minus-markers = false
 
 [delta "decorations"]
-    commit-decoration-style = blue ol
-    commit-style = raw
-    file-style = omit
-    hunk-header-decoration-style = blue box
-    hunk-header-file-style = red
-    hunk-header-line-number-style = "#067a00"
-    hunk-header-style = file line-number syntax
+	commit-decoration-style = blue ol
+	commit-style = raw
+	file-style = omit
+	hunk-header-decoration-style = blue box
+	hunk-header-file-style = red
+	hunk-header-line-number-style = "#067a00"
+	hunk-header-style = file line-number syntax
 [merge]
-    conflictstyle = diff3
-
+	conflictstyle = diff3
 [diff]
-    colorMoved = default
-[commit]
-	gpgsign = true
+	colorMoved = default
