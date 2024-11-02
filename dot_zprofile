@@ -1,0 +1,57 @@
+# ========================================
+# Environment variable
+# ========================================
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+export GODEBUG=asyncpreemptoff=1
+export EDITOR=nvim
+
+# AtCoder Library
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/ghq/github.com/atcoder/ac-library
+
+if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
+  export ESMETA_HOME=~/ghq/github.com/es-meta/esmeta
+  export PATH="$ESMETA_HOME/bin:$PATH"
+fi
+
+
+# ========================================
+# PATH
+# ========================================
+addToPath() {
+    export PATH="$1:$PATH"
+}
+
+
+if command -v brew &>/dev/null; then
+  export BREW_PREFIX=$(dirname $(dirname $(which brew)))
+fi
+
+# Brew
+addToPath "$BREW_PREFIX/sbin:$PATH"
+# LLVM
+addToPath "$BREW_PREFIX/opt/llvm/bin:$PATH"
+# Openjdk
+addToPath "$BREW_PREFIX/opt/openjdk/bin:$PATH"
+# curl
+addToPath "$BREW_PREFIX/opt/curl/bin:$PATH"
+# Standard ML
+addToPath "/usr/local/smlnj/bin:$PATH"
+# Python package manager
+addToPath "~/.local/bin:$PATH"
+# Yarn
+addToPath "$PATH:$HOME/.yarn/bin"
+
+# pnpm
+export PNPM_HOME="${HOME}/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) addToPath "$PNPM_HOME:$PATH" ;;
+esac
+
+# gcloud
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+
+
+# Change brew installation to this?
+eval "$(/opt/homebrew/bin/brew shellenv)"
