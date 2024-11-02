@@ -26,16 +26,6 @@ fi
 
 brew update
 
-# caskroom/versionsで入れたものはbrew bundleでインストールできない
-# https://github.com/Homebrew/homebrew-cask-versions#usage
-brew tap homebrew/cask-versions
-brew install google-chrome-canary
-
-if [[ $CI ]]; then
-  # goが必要なformulaはスキップする
-  # actionsはgoが事前にインストールされているが、ワークフローでバージョンを上書きする権限がない
-  export HOMEBREW_BUNDLE_BREW_SKIP="go kreuzwerker/taps/m1-terraform-provider-helper"
-fi
 brew bundle --global --no-lock --no-upgrade
 
 if [[ $CI ]]; then
