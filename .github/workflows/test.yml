@@ -13,19 +13,19 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Get Brew Cache Dir
-        id: get-cache-dir
-        run: |
-          echo "dir=$(brew --cache)" >> $GITHUB_OUTPUT
-        shell: bash
-      - name: Cache Brew
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.get-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-${{ steps.get-cache-dir.outputs.dir }}-${{ hashFiles('**/dot_Brewfile') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ steps.get-cache-dir.outputs.dir }}-
-            ${{ runner.os }}-
+      # - name: Get Brew Cache Dir
+      #   id: get-cache-dir
+      #   run: |
+      #     echo "dir=$(brew --cache)" >> $GITHUB_OUTPUT
+      #   shell: bash
+      # - name: Cache Brew
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ steps.get-cache-dir.outputs.dir }}
+      #     key: ${{ runner.os }}-${{ steps.get-cache-dir.outputs.dir }}-${{ hashFiles('**/dot_Brewfile') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ steps.get-cache-dir.outputs.dir }}-
+      #       ${{ runner.os }}-
       - name: "Install chezmoi and apply"
         run: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply no-yan
       - run: brew list
