@@ -3,7 +3,6 @@
 # To profile performance, uncomment the line below.
 # zmodload zsh/zprof
 
-
 if command -v brew &>/dev/null; then
   export BREW_PREFIX=$(dirname $(dirname $(which brew)))
 fi
@@ -34,14 +33,13 @@ alias oj-t="oj t -c 'pypy main.py'" # for online judge tools
 # https://atcoder.github.io/ac-library/document_ja/appendix.html
 
 
-
 # ========================================
 # Function definition
 # ========================================
 
 # Select existing repository to cd
 fzf-ghq() {
-# https://qiita.com/kassy11/items/77456688a392ddb0b285
+  # https://qiita.com/kassy11/items/77456688a392ddb0b285
   local src=$(ghq list | fzf --prompt="Git Repos > " --preview "batcat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
 
   if [ -n "$src" ]; then
@@ -102,13 +100,8 @@ zshaddhistory() {
     # tabtab
     [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
-
     # bash compatible completion
     autoload -U +X bashcompinit && bashcompinit
-
-    # terraform
-    complete -o nospace -C $BREW_PREFIX/bin/terraform terraform
-    complete -o nospace -C $BREW_PREFIX/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
 
     # AWS
     complete -C '/usr/local/bin/aws_completer' aws
@@ -129,18 +122,13 @@ zshaddhistory() {
 # Misc
 # ========================================
 
-## Terminal Logs
+## History
 HISTSIZE=10000
 SAVEHIST=10000
 setopt append_history
 setopt share_history
 setopt hist_ignore_all_dups
 
-
-# iTerm2 shell integration
-if test -e "${HOME}/.iterm2_shell_integration.zsh";
-then source "${HOME}/.iterm2_shell_integration.zsh"
-fi
 
 # Starship prompt
 eval source <($BREW_PREFIX/bin/starship init zsh --print-full-init)
