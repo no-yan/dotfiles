@@ -39,7 +39,7 @@ alias pn=pnpm
 # ========================================
 # Function definition
 # ========================================
-# Select existing repository and move
+# Select existing repository to cd
 fzf-ghq() {
 # https://qiita.com/kassy11/items/77456688a392ddb0b285
   local src=$(ghq list | fzf --prompt="Git Repos > " --preview "batcat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
