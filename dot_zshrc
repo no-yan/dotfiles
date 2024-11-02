@@ -1,39 +1,39 @@
 #!/bin/zsh
 
-# To propile performance, un-commnet the line below.
+# To profile performance, uncomment the line below.
 # zmodload zsh/zprof
 
+
+if command -v brew &>/dev/null; then
+  export BREW_PREFIX=$(dirname $(dirname $(which brew)))
+fi
 
 # ========================================
 # Alias
 # ========================================
 setopt complete_aliases
 
-# Git aliases
-alias gcb="git checkout -b"
-alias gcm="git commit -m"
-alias gal='git add -A'
+# Git
+alias g="git"
 alias gp="git push"
-alias currentBranch="git branch --contains"
 
-# Zsh aliases
-alias sz='source ~/.zshrc'
-alias vz='nvim  ~/.zshrc'
+# Zsh
+alias sz="source ~/.zshrc"
+alias vz="nvim  ~/.zshrc"
 
-# Neovim aliases
-alias nvc='cd ~/.config/nvim && nvim init.lua'
-alias v='nvim'
-alias vim='nvim'
+# Neovim
+alias nvc="cd ~/.config/nvim && nvim init.lua"
+alias v="nvim"
+alias vim="nvim"
 
-# Other aliases
-alias yaw="yarn workspace"
+# Pnpm
+alias pn=pnpm
 
-# Atcoder aliases
-alias acc-s='acc s main.py -- --guess-python-interpreter pypy'
-alias oj-t='oj t -c "pypy main.py"' # for online judge tools
+# Atcoder
+alias acc-s="acc s main.py -- --guess-python-interpreter pypy"
+alias oj-t="oj t -c 'pypy main.py'" # for online judge tools
 # https://atcoder.github.io/ac-library/document_ja/appendix.html
 
-alias pn=pnpm
 
 
 # ========================================
@@ -106,8 +106,8 @@ zshaddhistory() {
     autoload -U +X bashcompinit && bashcompinit
 
     # terraform
-    complete -o nospace -C $(brew --prefix)/bin/terraform terraform
-    complete -o nospace -C $(brew --prefix)/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
+    complete -o nospace -C $BREW_PREFIX/bin/terraform terraform
+    complete -o nospace -C $BREW_PREFIX/Cellar/tfenv/2.2.3/versions/1.2.3/terraform terraform
 
     # AWS
     complete -C '/usr/local/bin/aws_completer' aws
@@ -135,21 +135,21 @@ setopt share_history
 setopt hist_ignore_all_dups
 
 
-# iterm2 shell integration
+# iTerm2 shell integration
 if test -e "${HOME}/.iterm2_shell_integration.zsh";
 then source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
 # Starship prompt
-eval source <($(brew --prefix)/bin/starship init zsh --print-full-init)
+eval source <($BREW_PREFIX/bin/starship init zsh --print-full-init)
 
 # Mise
-eval "$($(brew --prefix)/bin/mise activate zsh)"
+eval "$($BREW_PREFIX/bin/mise activate zsh)"
 
 # Auto compile .zshrc
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
   zcompile ~/.zshrc
 fi
 
-# To propile performance, un-commnet the line below.
+# To propile performance, uncomment the line below.
 # zprof
