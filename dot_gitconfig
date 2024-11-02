@@ -18,24 +18,24 @@
    path = ~/.gitconfig_dmmep
 
 [alias]
-	aliases = config --get-regexp '^alias\\.'
-	s = status
-	cp = cherry-pick
-	co = checkout
-	fixit = commit --amend --no-edit
-	wip = commit -m 'wip'
-	pushf = push --force-with-lease
-	coi = !git co $(git r | fzf)
-	r = !git reflog -n 50 --pretty=format:'%gs' | "perl -anal -e '$seen{$1}++ or print $1 if /checkout:.*to (.+)/'"
-	sha = !git rev-parse "${1-HEAD}"
-	com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
 	# https://motemen.hatenablog.com/entry/2022/04/git-aliases
-	vacuum = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
-	graph = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
-	restore = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
-	stash-dry = stash show -p # or --name-only ?
-        changed = diff --name-only origin/main...HEAD
+	aliases = config --get-regexp '^alias\\.'
+	co = checkout
+	coi = !git co $(git r | fzf)
+	com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
+	fixit = commit --amend --no-edit
+	pushf = push --force-with-lease
+	s = status
+
 	blame = blame -w -C -C -C
+	cp = cherry-pick
+	graph = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
+	r = !git reflog -n 50 --pretty=format:'%gs' | "perl -anal -e '$seen{$1}++ or print $1 if /checkout:.*to (.+)/'"
+	restore = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
+	sha = !git rev-parse "${1-HEAD}"
+	vacuum = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
+	wip = commit -m 'wip'
+        changed = diff --name-only origin/main...HEAD
 
 [fetch]
 	prune = true
