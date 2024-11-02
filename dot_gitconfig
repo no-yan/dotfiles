@@ -35,6 +35,7 @@
 	restore = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
 	stash-dry = stash show -p # or --name-only ?
         changed = diff --name-only origin/main...HEAD
+	blame = blame -w -C -C -C
 
 [fetch]
 	prune = true
@@ -92,3 +93,5 @@
 
 [diff]
     colorMoved = default
+[commit]
+	gpgsign = true
