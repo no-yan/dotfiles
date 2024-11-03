@@ -659,6 +659,10 @@ require('lazy').setup({
           cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
           settings = {
             ['rust-analyzer'] = {
+              carg = {
+                allFeatures = true,
+                target = 'nightly',
+              },
               checkOnSave = {
                 command = 'clippy',
                 extraArgs = { '--profile', 'rust-analyzer' },
