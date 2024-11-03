@@ -154,6 +154,16 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+vim.diagnostic.config {
+  float = {
+    focusable = true,
+    close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
+    border = 'rounded',
+    prefix = ' ',
+    scope = 'cursor',
+  },
+}
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -575,17 +585,21 @@ require('lazy').setup({
           -- Enable inlay hints by default
           vim.lsp.inlay_hint.enable()
 
-          -- Set updatetime for CursorHold
-          -- 300ms of no cursor movement to trigger CursorHold
-          vim.opt.updatetime = 100
-
-          -- Show diagnostic popup on cursor hover
-          local diag_float_grp = vim.api.nvim_create_augroup('DiagnosticFloat', { clear = true })
+          -- Show line diagnostics automatically in hover window
+          -- https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#show-line-diagnostics-automatically-in-hover-window
           vim.api.nvim_create_autocmd('CursorHold', {
+            buffer = event.buf,
             callback = function()
-              vim.diagnostic.open_float(nil, { focusable = false })
+              -- 既に浮動ウィンドウが開いている場合は何もしない
+              for _, win in ipairs(vim.api.nvim_list_wins()) do
+                local config = vim.api.nvim_win_get_config(win)
+                if config.relative ~= '' then
+                  return -- 浮動ウィンドウがあるため何もせずリターン
+                end
+              end
+
+              vim.diagnostic.open_float(nil)
             end,
-            group = diag_float_grp,
           })
         end,
       })
