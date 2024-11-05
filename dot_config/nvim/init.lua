@@ -1235,35 +1235,20 @@ require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
 require 'custom.autocmd.fold'
 
+local git_utils = require 'custom.utils.git'
+vim.keymap.set('n', '<leader>gb', function()
+  git_utils.GitBlameRange()
+end, { desc = '[G]it [B]lame Entire File' })
+
+-- Map <leader>gb in visual mode for selected range
+vim.keymap.set('v', '<leader>gb', function()
+  local line1 = vim.fn.line 'v'
+  local line2 = vim.fn.line '.'
+  git_utils.GitBlameRange(line1, line2)
+end, { desc = '[G]it [B]lame Selected Range' })
+
 -- Neovimの内部エンコーディングをUTF-8に設定
 vim.opt.encoding = 'utf-8'
 
 -- ファイルのエンコーディングをUTF-8に設定
 vim.opt.fileencoding = 'utf-8'
-
--- Lua function to run git blame for a specified range in the current file
-local function GitBlameRange(line1, line2)
-  local file_dir = vim.fn.expand '%:p:h' -- Get directory of current file
-  local file_name = vim.fn.expand '%:t' -- Get current filename
-  local command
-  if line1 and line2 then
-    -- Blame for the specified range
-    command = 'git -C ' .. vim.fn.shellescape(file_dir) .. ' blame -L ' .. line1 .. ',' .. line2 .. ' ' .. file_name
-  else
-    -- Blame the entire file if no range is specified
-    command = 'git -C ' .. vim.fn.shellescape(file_dir) .. ' blame ' .. file_name
-  end
-
-  -- Run the command and capture the result
-  vim.cmd('vsplit | term ' .. command)
-  vim.fn.systemlist(command)
-end
-
--- Create a command to call the function with a specified line range
-vim.api.nvim_create_user_command('GB', function(opts)
-  if opts.range == 0 then
-    GitBlameRange() -- No range provided, blame entire file
-  else
-    GitBlameRange(opts.line1, opts.line2) -- Blame specified range
-  end
-end, { range = true })
