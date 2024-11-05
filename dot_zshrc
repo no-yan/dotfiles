@@ -32,7 +32,6 @@ alias acc-s="acc s main.py -- --guess-python-interpreter pypy"
 alias oj-t="oj t -c 'pypy main.py'" # for online judge tools
 # https://atcoder.github.io/ac-library/document_ja/appendix.html
 
-
 # ========================================
 # Function definition
 # ========================================
