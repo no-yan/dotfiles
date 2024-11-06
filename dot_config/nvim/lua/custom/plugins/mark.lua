@@ -1,3 +1,14 @@
+local function get_git_branch()
+  local handle = io.popen 'git rev-parse --abbrev-ref HEAD 2>/dev/null'
+  if handle then
+    local branch = handle:read('*a'):gsub('%s+', '')
+    handle:close()
+    return branch
+  else
+    return nil
+  end
+end
+
 return {
   'ThePrimeagen/harpoon',
   branch = 'harpoon2',
@@ -6,7 +17,19 @@ return {
   dependencies = { 'nvim-lua/plenary.nvim' },
   config = function()
     local harpoon = require 'harpoon'
-    harpoon:setup()
+    harpoon:setup {
+      settings = {
+        key = function()
+          local cwd = vim.loop.cwd() or 'default_directory'
+          local branch = get_git_branch()
+          if branch then
+            return cwd .. '_' .. branch
+          else
+            return cwd
+          end
+        end,
+      },
+    }
 
     -- Add edited files to harpoon list
     vim.api.nvim_create_autocmd('InsertLeave', {
