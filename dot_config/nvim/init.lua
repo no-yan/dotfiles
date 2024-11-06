@@ -1253,4 +1253,4 @@ vim.opt.encoding = 'utf-8'
 -- ファイルのエンコーディングをUTF-8に設定
 vim.opt.fileencoding = 'utf-8'
 vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
-vim.opt.grepformat.append '%f:%l:%c:%m'
+vim.opt.grepformat = '%f:%l:%c:%m'
