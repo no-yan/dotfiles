@@ -39,7 +39,7 @@ alias oj-t="oj t -c 'pypy main.py'" # for online judge tools
 # Select existing repository to cd
 fzf-ghq() {
   # https://qiita.com/kassy11/items/77456688a392ddb0b285
-  local src=$(ghq list | fzf --prompt="Git Repos > " --preview "batcat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
+  local src=$(ghq list | fzf --prompt="Git Repos > " --preview "bat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
 
   if [ -n "$src" ]; then
     BUFFER="cd $(ghq root)/${src}"
