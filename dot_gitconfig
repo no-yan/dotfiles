@@ -24,14 +24,16 @@
 	defaultBranch = main
 [branch]
 	sort = -committerdate
-[commit]
-	gpgsign = true
 [fetch]
 	prune = true
-[diff]
-	submodule = log
+[commit]
+	gpgsign = true
 [push]
 	useForceIfIncludes = true
+[rebase]
+	autostash = true
+[diff]
+	submodule = log
 [gpg]
 	format = ssh
 
@@ -46,7 +48,7 @@
 	wip      = commit -m 'wip'
 	pushf    = push --force-with-lease
 	blame    = blame -w -C -C -C
-	mod      = diff --name-only origin/main...HEAD  # mod is abbreviated from modified
+	mod      = diff --name-only main...HEAD  # mod is abbreviated from modified
 	graph    = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
 
 
