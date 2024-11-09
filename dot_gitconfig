@@ -24,16 +24,16 @@
 	defaultBranch = main
 [branch]
 	sort = -committerdate
-[fetch]
-	prune = true
 [commit]
 	gpgsign = true
+[fetch]
+	prune = true
+[diff]
+	submodule = log
 [push]
 	useForceIfIncludes = true
 [rebase]
 	autostash = true
-[diff]
-	submodule = log
 [gpg]
 	format = ssh
 
@@ -60,6 +60,7 @@
 			remote_head=${remote_head#refs/remotes/origin/}; \
 			git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; \
 			}; f"
+	pick    = !git status -s -u | fzf --multi --cycle --preview \"git diff --color=always -- {2} | delta \" --height=50% --layout=reverse | awk '{print $2}' | xargs -r git add && git status
 	sha     = !git rev-parse "${1-HEAD}"
 	r       = !git reflog -n 50 --pretty=format:'%gs' | "perl -anal -e '$seen{$1}++ or print $1 if /checkout:.*to (.+)/'"
 	vacuum  = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
