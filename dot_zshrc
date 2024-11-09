@@ -24,6 +24,9 @@ alias nvc="cd ~/.config/nvim && nvim init.lua"
 alias v="nvim"
 alias vim="nvim"
 
+# GNU
+alias xargs="gxargs"
+
 # Pnpm
 alias pn=pnpm
 
