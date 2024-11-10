@@ -44,7 +44,7 @@
 	cp       = cherry-pick
 
 	# Subcommand aliases
-	fix      = commit --amend --no-edit
+	fixit    = commit --amend --no-edit
 	wip      = commit -m 'wip'
 	pushf    = push --force-with-lease
 	blame    = blame -w -C -C -C
