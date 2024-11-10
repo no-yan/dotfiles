@@ -50,21 +50,25 @@
 	blame    = blame -w -C -C -C
 	mod      = diff --name-only main...HEAD  # mod is abbreviated from modified
 	graph    = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
-
+	unstage  = reset HEAD --
 
 	# Extensions
-	aliases = config --get-regexp '^alias\\.'
-	coi     = !git co $(git r | fzf)
-	com     = "!f() { \
-			remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); \
-			remote_head=${remote_head#refs/remotes/origin/}; \
-			git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; \
-			}; f"
-	pick    = !git status -s -u | fzf --multi --cycle --preview \"git diff --color=always -- {2} | delta \" --height=50% --layout=reverse | awk '{print $2}' | xargs -r git add && git status
-	sha     = !git rev-parse "${1-HEAD}"
-	r       = !git reflog -n 50 --pretty=format:'%gs' | "perl -anal -e '$seen{$1}++ or print $1 if /checkout:.*to (.+)/'"
-	vacuum  = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
-	restore = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
+	aliases  = config --get-regexp '^alias\\.'
+	coi      = !git co $(git r | fzf)
+	com      = "!f() { \
+		 	remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); \
+		 	remote_head=${remote_head#refs/remotes/origin/}; \
+		 	git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; \
+		 	}; f"
+	pick     = !git add -N -A && git status -s -u \
+		 	| fzf --multi --cycle --height=50% --layout=reverse \
+		 	--preview  \"git diff --color=always -- {2} | delta \" \
+		 	| awk '{print $2}' \
+		 	| xargs -r git add && git status
+	sha      = !git rev-parse "${1-HEAD}"
+	r        = !git reflog -n 50 --pretty=format:'%gs' | "perl -anal -e '$seen{$1}++ or print $1 if /checkout:.*to (.+)/'"
+	vacuum   = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main'|xargs git branch -d; git fetch --prune; };f"
+	restore  = "!f() { git checkout \"$(git log --format='%h:%ar' -- \"$@\" | head -n 1 | cut -d: -f 1,1)^\" -- \"$@\"; }; f"
 	# https://motemen.hatenablog.com/entry/2022/04/git-aliases
 
 [ghq]
