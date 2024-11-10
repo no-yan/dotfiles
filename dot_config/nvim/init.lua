@@ -661,7 +661,7 @@ require('lazy').setup({
         -- pyright = {},
 
         rust_analyzer = {
-          cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
+          -- cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
           settings = {
             ['rust-analyzer'] = {
               carg = {
