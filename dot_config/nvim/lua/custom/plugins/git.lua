@@ -6,7 +6,6 @@ return {
   },
   {
     'NeogitOrg/neogit',
-    cmd = 'StartupTime',
     dependencies = {
       'nvim-lua/plenary.nvim', -- required
       'sindrets/diffview.nvim', -- optional - Diff integration
@@ -17,5 +16,6 @@ return {
       'echasnovski/mini.pick', -- optional
     },
     config = true,
+    cmd = 'Neogit',
   },
 }
