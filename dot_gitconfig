@@ -32,6 +32,7 @@
 	submodule = log
 [push]
 	useForceIfIncludes = true
+	autoSetupRemote = true
 [rebase]
 	autostash = true
 [gpg]
