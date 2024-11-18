@@ -616,6 +616,16 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
+      -- HACK: Works around <https://github.com/neovim/neovim/issues/30985>.
+      for _, method in ipairs { 'textDocument/diagnostic', 'workspace/diagnostic' } do
+        local default_diagnostic_handler = vim.lsp.handlers[method]
+        vim.lsp.handlers[method] = function(err, result, context, config)
+          if err ~= nil and err.code == -32802 then
+            return
+          end
+          return default_diagnostic_handler(err, result, context, config)
+        end
+      end
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
