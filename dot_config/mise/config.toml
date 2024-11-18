@@ -1,0 +1,7 @@
+[tools]
+nodejs = "lts"
+perl = "latest"
+python = "latest"
+poetry = "latest"
+terraform = "latest"
+ruby = "latest"
