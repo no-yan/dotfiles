@@ -669,9 +669,21 @@ require('lazy').setup({
           },
         },
         -- pyright = {},
-
+        terraformls = {
+          init_options = {
+            -- the settings configuration option uses the workspace/didChangeConfiguration event,
+            -- which is not supported by terraform-ls.
+            -- Instead you should use init_options which passes the settings as part of the LSP initialize call
+            -- as is required by terraform-ls.
+            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#terraformls
+            experimentalFeatures = {
+              prefillRequiredFields = true,
+              validateOnSave = true,
+            },
+          },
+        },
         rust_analyzer = {
-          -- cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
+          cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
           settings = {
             ['rust-analyzer'] = {
               carg = {
