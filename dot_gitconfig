@@ -40,8 +40,9 @@
 
 [alias]
         # Command Shortcuts
-	co       = checkout
 	s        = status
+	co       = checkout
+	cm       = commit
 	cp       = cherry-pick
 
 	# Subcommand aliases
@@ -52,6 +53,7 @@
 	mod      = diff --name-only main...HEAD  # mod is abbreviated from modified
 	graph    = log --graph --pretty='format:%h %Cblue%ai%Creset %Cgreen%an%Creset | %s %Cred%d%Creset'
 	unstage  = reset HEAD --
+	stack    = commit --fixup HEAD
 
 	# Extensions
 	aliases  = config --get-regexp '^alias\\.'
