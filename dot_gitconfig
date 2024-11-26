@@ -56,7 +56,7 @@
 	stack    = commit --fixup HEAD
 
 	# Extensions
-	aliases  = config --get-regexp '^alias\\.'
+	aliases  = !git config -l | grep alias | cut -d '.' -f 2
 	coi      = !git co $(git r | fzf)
 	com      = "!f() { \
 		 	remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); \
