@@ -162,6 +162,7 @@ vim.diagnostic.config {
     prefix = ' ',
     scope = 'cursor',
   },
+  severity_sort = true,
 }
 
 -- [[ Basic Keymaps ]]
