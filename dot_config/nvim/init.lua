@@ -1261,7 +1261,6 @@ require 'custom.keymap'
 -- [[ Auto Cmd ]]
 require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
-require 'custom.autocmd.fold'
 
 local git_utils = require 'custom.utils.git'
 vim.keymap.set('n', '<leader>gb', function()
