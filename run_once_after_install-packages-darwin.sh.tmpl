@@ -24,8 +24,8 @@ if [[ $CI ]]; then
   echo "Disabled ssh setting."
 fi
 
-brew update
-
+brew bundle list --global --tap | xargs -n 1 brew tap
+brew bundle --global list | xargs brew fetch --concurrency 16
 brew bundle --global --no-lock --no-upgrade
 
 if [[ $CI ]]; then
