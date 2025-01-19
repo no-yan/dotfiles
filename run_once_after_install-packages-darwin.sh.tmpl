@@ -1,6 +1,7 @@
 {{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 
+# dot_Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
 set -e # -e: exit on error
 
 if [ ! "$(command -v brew)" ]; then
