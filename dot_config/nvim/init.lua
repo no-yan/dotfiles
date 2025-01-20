@@ -688,6 +688,7 @@ require('lazy').setup({
             },
           },
         },
+        yamlls = {},
         rust_analyzer = {
           cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
           settings = {
