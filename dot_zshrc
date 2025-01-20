@@ -146,3 +146,8 @@ fi
 
 # To propile performance, uncomment the line below.
 # zprof
+
+alias proot='cd $(git rev-parse --show-toplevel)'
+git-root() {
+  cd "$(git rev-parse --show-toplevel)" || echo "Not in a Git repository"
+}
