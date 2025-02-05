@@ -86,6 +86,7 @@ gignore() {
 # ========================================
 
 # Cache compinit
+fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
 zstyle ':completion:*' rehash true
 
 autoload -Uz compinit
@@ -151,3 +152,4 @@ alias proot='cd $(git rev-parse --show-toplevel)'
 git-root() {
   cd "$(git rev-parse --show-toplevel)" || echo "Not in a Git repository"
 }
+

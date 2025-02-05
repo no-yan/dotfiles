@@ -15,6 +15,17 @@ if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
   export PATH="$ESMETA_HOME/bin:$PATH"
 fi
 
+# Homebrewのパスを自動検出
+if [ -z "$(command -v brew)" ]; then
+  for prefix in /opt/homebrew /usr/local /home/linuxbrew/.linuxbrew; do
+    if [ -x "$prefix/bin/brew" ]; then
+      eval "$($prefix/bin/brew shellenv)"
+      break
+    fi
+  done
+else
+  echo "Error: Homebrew not found. Please install Homebrew first." >&2
+fi
 
 # ========================================
 # PATH
@@ -23,13 +34,13 @@ addToPath() {
     export PATH="$1:$PATH"
 }
 
-
 if command -v brew &>/dev/null; then
   export BREW_PREFIX=$(dirname $(dirname $(which brew)))
 fi
 
 # Brew
 addToPath "$BREW_PREFIX/sbin"
+
 # LLVM
 addToPath "$BREW_PREFIX/opt/llvm/bin"
 # Openjdk
@@ -56,4 +67,7 @@ esac
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# load zsh completion script stored in brew
+# the built-in version of zsh doesn’t know about by default.
+fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
+
