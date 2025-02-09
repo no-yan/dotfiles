@@ -540,6 +540,10 @@ require('lazy').setup({
           -- or a suggestion from your LSP for this to activate.
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
+          -- Show the call hierchies on your cursor.
+          map('<leader>ch', vim.lsp.buf.incoming_calls, '[C]all [h]ierchies(incoming)')
+          map('<leader>cH', vim.lsp.buf.outgoing_calls, '[C]all [H]ierchies(outgoing)')
+
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
