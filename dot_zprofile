@@ -1,24 +1,11 @@
 #!/bin/zsh
 
-# ========================================
-# Environment variable
-# ========================================
-export GOPATH=$HOME/go
-export GODEBUG=asyncpreemptoff=1
-export EDITOR=nvim
 
-# AtCoder Library
-export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/ghq/github.com/atcoder/ac-library
-
-if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
-  export ESMETA_HOME=~/ghq/github.com/es-meta/esmeta
-  export PATH="$ESMETA_HOME/bin:$PATH"
-fi
-
-# Homebrewのパスを自動検出
+# Setup Homebrew
 if [ -z "$(command -v brew)" ]; then
   for prefix in /opt/homebrew /usr/local /home/linuxbrew/.linuxbrew; do
     if [ -x "$prefix/bin/brew" ]; then
+      # this will set variables: e.g. $HOMEBREW_PREFIX
       eval "$($prefix/bin/brew shellenv)"
       break
     fi
@@ -34,27 +21,38 @@ addToPath() {
     export PATH="$1:$PATH"
 }
 
-if command -v brew &>/dev/null; then
-  export BREW_PREFIX=$(dirname $(dirname $(which brew)))
-fi
-
 # Brew
-addToPath "$BREW_PREFIX/sbin"
-
+addToPath "$HOMEBREW_PREFIX/sbin"
 # LLVM
-addToPath "$BREW_PREFIX/opt/llvm/bin"
+addToPath "$HOMEBREW_PREFIX/opt/llvm/bin"
 # Openjdk
-addToPath "$BREW_PREFIX/opt/openjdk/bin"
+addToPath "$HOMEBREW_PREFIX/opt/openjdk/bin"
 # Go
 addToPath "$GOPATH/bin"
 # curl
-addToPath "$BREW_PREFIX/opt/curl/bin"
+addToPath "$HOMEBREW_PREFIX/opt/curl/bin"
 # Standard ML
 addToPath "/usr/local/smlnj/bin"
 # Python package manager
 addToPath "$HOME/.local/bin"
 # Yarn
 addToPath "$HOME/.yarn/bin"
+
+
+# ========================================
+# Environment variable
+# ========================================
+export GOPATH=$HOME/go
+export GODEBUG=asyncpreemptoff=1
+export EDITOR=nvim
+
+# AtCoder Library
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/ghq/github.com/atcoder/ac-library
+
+if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
+  export ESMETA_HOME=~/ghq/github.com/es-meta/esmeta
+  addToPath "$ESMETA_HOME/bin"
+fi
 
 # pnpm
 export PNPM_HOME="${HOME}/Library/pnpm"
@@ -63,11 +61,11 @@ case ":$PATH:" in
   *) addToPath "$PNPM_HOME" ;;
 esac
 
-# gcloud
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 
 # load zsh completion script stored in brew
 # the built-in version of zsh doesn’t know about by default.
 fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
 
+# gcloud
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
