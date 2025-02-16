@@ -626,16 +626,67 @@ require('lazy').setup({
       }
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-      -- HACK: Works around <https://github.com/neovim/neovim/issues/30985>.
-      for _, method in ipairs { 'textDocument/diagnostic', 'workspace/diagnostic' } do
-        local default_diagnostic_handler = vim.lsp.handlers[method]
-        vim.lsp.handlers[method] = function(err, result, context, config)
-          if err ~= nil and err.code == -32802 then
-            return
+      ---@param client vim.lsp.Client
+      ---@param bufnr integer
+      ---@param cmd string
+      local function code_action_sync(client, bufnr, cmd)
+        -- https://github.com/golang/tools/blob/gopls/v0.11.0/gopls/doc/vim.md#imports
+        local params = vim.lsp.util.make_range_params()
+        params.context = { only = { cmd }, diagnostics = {} }
+        -- gopls のドキュメントでは `vim.lsp.buf_request_sync` を使っているが、
+        -- ここでは対象 Language Server を1つに絞るために `vim.lsp.Client` の `request_sync` を使う
+        local res = client.request_sync('textDocument/codeAction', params, 3000, bufnr)
+        for _, r in pairs(res and res.result or {}) do
+          if r.edit then
+            local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or 'utf-16'
+            vim.lsp.util.apply_workspace_edit(r.edit, enc)
           end
-          return default_diagnostic_handler(err, result, context, config)
         end
       end
+
+      local function organize_imports_sync(client, bufnr)
+        code_action_sync(client, bufnr, 'source.organizeImports')
+      end
+
+      local save_handlers_by_client_name = {
+        gopls = { organize_imports_sync, format_sync },
+        biome = { fix_all_sync, organize_imports_sync, format_sync },
+      }
+
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        ---@param args { buf: integer }
+        callback = function(args)
+          local bufnr = args.buf
+          local shouldSleep = false
+          for _, client in pairs(vim.lsp.get_clients { bufnr = bufnr }) do
+            local save_handlers = save_handlers_by_client_name[client.name]
+            for _, f in pairs(save_handlers or {}) do
+              if shouldSleep then
+                vim.api.nvim_command 'sleep 10ms'
+              else
+                shouldSleep = true
+              end
+              f(client, bufnr)
+            end
+          end
+        end,
+      })
+
+      local function code_action_sync(client, bufnr, cmd)
+        -- https://github.com/golang/tools/blob/gopls/v0.11.0/gopls/doc/vim.md#imports
+        local params = vim.lsp.util.make_range_params()
+        params.context = { only = { cmd }, diagnostics = {} }
+        -- gopls のドキュメントでは `vim.lsp.buf_request_sync` を使っているが、
+        -- ここでは対象 Language Server を1つに絞るために `vim.lsp.Client` の `request_sync` を使う
+        local res = client.request_sync('textDocument/codeAction', params, 3000, bufnr)
+        for _, r in pairs(res and res.result or {}) do
+          if r.edit then
+            local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or 'utf-16'
+            vim.lsp.util.apply_workspace_edit(r.edit, enc)
+          end
+        end
+      end
+
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -848,7 +899,35 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        ts_ls = {},
+        ts_ls = {
+          settings = {
+            typescript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all'
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+            javascript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all'
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                includeInlayVariableTypeHints = true,
+
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+          },
+        },
         html = { filetypes = { 'html', 'twig', 'hbs' } },
         tailwindcss = {},
         --
@@ -870,6 +949,7 @@ require('lazy').setup({
             },
           },
         },
+        biome = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -935,7 +1015,11 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
+        avascript = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -1268,6 +1352,7 @@ require 'custom.keymap'
 -- [[ Auto Cmd ]]
 require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
+require 'custom.autocmd.biome'
 
 local git_utils = require 'custom.utils.git'
 vim.keymap.set('n', '<leader>gb', function()
