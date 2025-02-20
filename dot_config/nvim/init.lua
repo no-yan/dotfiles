@@ -451,6 +451,7 @@ require('lazy').setup({
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'b0o/schemastore.nvim',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -672,21 +673,6 @@ require('lazy').setup({
         end,
       })
 
-      local function code_action_sync(client, bufnr, cmd)
-        -- https://github.com/golang/tools/blob/gopls/v0.11.0/gopls/doc/vim.md#imports
-        local params = vim.lsp.util.make_range_params()
-        params.context = { only = { cmd }, diagnostics = {} }
-        -- gopls のドキュメントでは `vim.lsp.buf_request_sync` を使っているが、
-        -- ここでは対象 Language Server を1つに絞るために `vim.lsp.Client` の `request_sync` を使う
-        local res = client.request_sync('textDocument/codeAction', params, 3000, bufnr)
-        for _, r in pairs(res and res.result or {}) do
-          if r.edit then
-            local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or 'utf-16'
-            vim.lsp.util.apply_workspace_edit(r.edit, enc)
-          end
-        end
-      end
-
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -743,7 +729,29 @@ require('lazy').setup({
             },
           },
         },
-        yamlls = {},
+        yamlls = {
+          settings = {
+            yaml = {
+              validate = true,
+              schemas = {
+                kubernetes = { 'k8s**.yaml', 'kube*/*.yaml' },
+              },
+            },
+          },
+        },
+        jsonls = {
+          settines = {
+            json = {
+              schemas = require('schemastore').json.schemas {
+                select = {
+                  'Renovate',
+                  'GitHub Workflow Template Properties',
+                },
+              },
+              validate = { enable = true },
+            },
+          },
+        },
         rust_analyzer = {
           cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
           settings = {
@@ -899,35 +907,114 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        ts_ls = {
+        vtsls = {
+          -- make sure mason installs the server
+          -- explicitly add default filetypes, so that we can extend
+          -- them in related extras
+          filetypes = {
+            'javascript',
+            'javascriptreact',
+            'javascript.jsx',
+            'typescript',
+            'typescriptreact',
+            'typescript.tsx',
+          },
           settings = {
-            typescript = {
-              inlayHints = {
-                includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all'
-                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-                includeInlayVariableTypeHints = true,
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = true,
-                includeInlayEnumMemberValueHints = true,
+            complete_function_calls = true,
+            vtsls = {
+              enableMoveToFileCodeAction = true,
+              autoUseWorkspaceTsdk = true,
+              experimental = {
+                maxInlayHintLength = 30,
+                completion = {
+                  enableServerSideFuzzyMatch = true,
+                },
               },
             },
-            javascript = {
+            typescript = {
+              updateImportsOnFileMove = { enabled = 'always' },
+              suggest = {
+                completeFunctionCalls = true,
+              },
               inlayHints = {
-                includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all'
-                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-                includeInlayVariableTypeHints = true,
-
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = true,
-                includeInlayEnumMemberValueHints = true,
+                enumMemberValues = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                parameterNames = { enabled = 'literals' },
+                parameterTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                variableTypes = { enabled = false },
               },
             },
           },
+          keys = {
+            {
+              'gD',
+              function()
+                local params = vim.lsp.util.make_position_params()
+                vim.lsp.execute {
+                  command = 'typescript.goToSourceDefinition',
+                  arguments = { params.textDocument.uri, params.position },
+                  open = true,
+                }
+              end,
+              desc = 'Goto Source Definition',
+            },
+            {
+              'gR',
+              function()
+                vim.lsp.execute {
+                  command = 'typescript.findAllFileReferences',
+                  arguments = { vim.uri_from_bufnr(0) },
+                  open = true,
+                }
+              end,
+              desc = 'File References',
+            },
+            {
+              '<leader>co',
+              vim.lsp.buf.code_action {
+                context = { only = { 'source.organizeImports' } },
+                apply = true,
+              },
+              desc = 'Organize Imports',
+            },
+            {
+              '<leader>cM',
+              vim.lsp.buf.code_action {
+                context = { only = { 'source.addMissingImports.ts' } },
+                apply = true,
+              },
+              desc = 'Add missing imports',
+            },
+            {
+              '<leader>cu',
+
+              vim.lsp.buf.code_action {
+                context = { only = { 'source.removeUnused.ts' } },
+                apply = true,
+              },
+              desc = 'Remove unused imports',
+            },
+            {
+              '<leader>cD',
+              vim.lsp.buf.code_action {
+                context = { only = { 'source.fixAll.ts' } },
+                apply = true,
+              },
+              desc = 'Fix all diagnostics',
+            },
+            {
+              '<leader>cV',
+              function()
+                vim.lsp.execute { command = 'typescript.selectTypeScriptVersion' }
+              end,
+              desc = 'Select TS workspace version',
+            },
+          },
         },
+        -- ts_ls = {
+        --   enabled = false,
+        -- },
         html = { filetypes = { 'html', 'twig', 'hbs' } },
         tailwindcss = {},
         --
