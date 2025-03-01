@@ -19,6 +19,13 @@ return {
         desc = ' 󱃄 Close All Folds',
       },
       {
+        'z0',
+        function()
+          require('ufo').closeFoldsWith(0)
+        end,
+        desc = ' 󱃄 Close L1 Folds',
+      },
+      {
         'z1',
         function()
           require('ufo').closeFoldsWith(1)
@@ -48,7 +55,7 @@ return {
       },
     },
     init = function()
-      -- INFO fold commands usually change the foldlevel, which fixes folds, e.g.
+      -- INFO: fold commands usually change the foldlevel, which fixes folds, e.g.
       -- auto-closing them after leaving insert mode, however ufo does not seem to
       -- have equivalents for zr and zm because there is no saved fold level.
       -- Consequently, the vim-internal fold levels need to be disabled by setting
@@ -70,7 +77,7 @@ return {
       -- open opening the buffer, close these fold kinds
       -- use `:UfoInspect` to get available fold kinds from the LSP
       close_fold_kinds_for_ft = {
-        default = { 'imports', 'comment' },
+        default = { 'comment' },
         json = { 'array' },
         c = { 'comment', 'region' },
       },
