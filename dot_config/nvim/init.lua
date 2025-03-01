@@ -1020,7 +1020,14 @@ require('lazy').setup({
         --
 
         typos_lsp = {
-          filetypes = { 'go', 'rust' },
+          on_attach = function(client, bufnr)
+            local blocked_extensions = { 'lua' }
+            local filename = vim.api.nvim_buf_get_name(bufnr)
+            local ext = filename:match '^.+%.(.+)$' -- 拡張子を取得
+            if ext and vim.tbl_contains(blocked_extensions, ext) then
+              client.stop()
+            end
+          end,
         },
         lua_ls = {
           -- cmd = {...},
@@ -1107,6 +1114,8 @@ require('lazy').setup({
         javascriptreact = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
         typescriptreact = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
+        jsonc = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
