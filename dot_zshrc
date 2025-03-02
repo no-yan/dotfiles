@@ -3,9 +3,19 @@
 # To profile performance, uncomment the line below.
 # zmodload zsh/zprof
 
-if command -v brew &>/dev/null; then
-  export BREW_PREFIX=$(dirname $(dirname $(which brew)))
-fi
+# ========================================
+# Options
+# ========================================
+
+# Enable emacs keymapping
+bindkey -e
+
+## History
+HISTSIZE=10000
+SAVEHIST=10000
+setopt append_history
+setopt share_history
+setopt hist_ignore_all_dups
 
 # ========================================
 # Alias
@@ -80,6 +90,10 @@ gignore() {
   curl -s -H "Accept: application/vnd.github.v3+json"  https://api.github.com/gitignore/templates/${templateType} | jq -r '.source' > .gitignore
 }
 
+alias proot='cd $(git rev-parse --show-toplevel)'
+git-root() {
+  cd "$(git rev-parse --show-toplevel)" || echo "Not in a Git repository"
+}
 
 # ========================================
 # Completion
@@ -119,13 +133,9 @@ source ~/completion-for-pnpm.zsh
 # Misc
 # ========================================
 
-## History
-HISTSIZE=10000
-SAVEHIST=10000
-setopt append_history
-setopt share_history
-setopt hist_ignore_all_dups
-
+if command -v brew &>/dev/null; then
+  export BREW_PREFIX=$HOMEBREW_PREFIX
+fi
 
 # Starship prompt
 eval source <($BREW_PREFIX/bin/starship init zsh --print-full-init)
@@ -137,12 +147,6 @@ eval "$($BREW_PREFIX/bin/mise activate zsh)"
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
   zcompile ~/.zshrc
 fi
-
-
-alias proot='cd $(git rev-parse --show-toplevel)'
-git-root() {
-  cd "$(git rev-parse --show-toplevel)" || echo "Not in a Git repository"
-}
 
 # To propile performance, uncomment the line below.
 # zprof
