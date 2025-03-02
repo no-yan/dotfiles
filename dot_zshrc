@@ -90,37 +90,34 @@ fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
 zstyle ':completion:*' rehash true
 
 autoload -Uz compinit
+# https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=2894219#gistcomment-2894219
+setopt extendedglob local_options
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  # 24時間以上古い場合だけフル compinit
+  compinit -d
+else
+  # 24時間以内ならチェックをスキップ
+  compinit -C
+fi
 
-# 初めて補完が必要になった時に `compinit` を実行
-zsh_compinit_init=false
-zshaddhistory() {
-  if [[ $zsh_compinit_init == false ]]; then
-    compinit
-    zsh_compinit_init=true
+# fzf
+[ -f ~/.fzf.zsh ] && source <(fzf --zsh)
 
-    # fzf
-    [ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+# bash compatible completion
+autoload -U +X bashcompinit && bashcompinit
 
-    # tabtab
-    [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+# AWS
+complete -C '/usr/local/bin/aws_completer' aws
 
-    # bash compatible completion
-    autoload -U +X bashcompinit && bashcompinit
+# gcloud
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
-    # AWS
-    complete -C '/usr/local/bin/aws_completer' aws
+# ESMeta
+if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
+  source $ESMETA_HOME/.completion
+fi
 
-    # gcloud
-    if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
-
-    # ESMeta
-    if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
-      source $ESMETA_HOME/.completion
-    fi
-
-  fi
-}
-
+source ~/completion-for-pnpm.zsh
 
 # ========================================
 # Misc
@@ -145,11 +142,11 @@ if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
   zcompile ~/.zshrc
 fi
 
-# To propile performance, uncomment the line below.
-# zprof
 
 alias proot='cd $(git rev-parse --show-toplevel)'
 git-root() {
   cd "$(git rev-parse --show-toplevel)" || echo "Not in a Git repository"
 }
 
+# To propile performance, uncomment the line below.
+# zprof
