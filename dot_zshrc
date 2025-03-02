@@ -86,25 +86,21 @@ gignore() {
 # ========================================
 
 # Cache compinit
-fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
+# See: https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=2894219#gistcomment-2894219
 zstyle ':completion:*' rehash true
 
+autoload bashcompinit && bashcompinit
 autoload -Uz compinit
-# https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=2894219#gistcomment-2894219
 setopt extendedglob local_options
+# 24時間以上古い場合だけフル compinit
 if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  # 24時間以上古い場合だけフル compinit
   compinit -d
 else
-  # 24時間以内ならチェックをスキップ
   compinit -C
 fi
 
 # fzf
 [ -f ~/.fzf.zsh ] && source <(fzf --zsh)
-
-# bash compatible completion
-autoload -U +X bashcompinit && bashcompinit
 
 # AWS
 complete -C '/usr/local/bin/aws_completer' aws
