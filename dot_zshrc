@@ -35,6 +35,9 @@ alias nvc="cd ~/.config/nvim && nvim init.lua"
 alias v="nvim"
 alias vim="nvim"
 
+# Chezmoi
+alias cz="chezmoi"
+
 # GNU
 alias xargs="gxargs"
 

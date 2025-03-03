@@ -1449,6 +1449,7 @@ require 'custom.keymap'
 require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
 require 'custom.autocmd.biome'
+require 'custom.autocmd.chezmoi'
 
 local git_utils = require 'custom.utils.git'
 vim.keymap.set('n', '<leader>gb', function()
