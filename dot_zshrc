@@ -17,6 +17,9 @@ setopt append_history
 setopt share_history
 setopt hist_ignore_all_dups
 
+# auto directory pushd that you can get dirs list by cd -[tab]
+setopt auto_pushd
+
 # ========================================
 # Alias
 # ========================================
