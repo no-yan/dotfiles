@@ -4,45 +4,36 @@ typeset -U PATH
 
 # Setup Homebrew
 if [ -z "$(command -v brew)" ]; then
+  brew_path=""
   for prefix in /opt/homebrew /usr/local /home/linuxbrew/.linuxbrew; do
     if [ -x "$prefix/bin/brew" ]; then
-      # this will set variables: e.g. $HOMEBREW_PREFIX
-      eval "$($prefix/bin/brew shellenv)"
+      brew_path="$prefix/bin/brew"
       break
     fi
   done
+
+  if [ -z $brew_path ]; then
+    echo "Error: Homebrew not found. Please install Homebrew first." >&2
+    exit 1
+  fi
+
+  # this will set variables: e.g. $HOMEBREW_PREFIX
+  eval "$($brew_path shellenv)"
 else
-  echo "Error: Homebrew not found. Please install Homebrew first." >&2
+  if [ -z $HOMEBREW_PREFIX ]; then
+    eval "$(brew shellenv)"
+  fi
 fi
-
-# ========================================
-# PATH
-# ========================================
-addToPath() {
-  export PATH="$1(N-/):$PATH"
-}
-
-# Brew
-addToPath "$HOMEBREW_PREFIX/sbin"
-# LLVM
-addToPath "$HOMEBREW_PREFIX/opt/llvm/bin"
-# Openjdk
-addToPath "$HOMEBREW_PREFIX/opt/openjdk/bin"
-# Go
-addToPath "$GOPATH/bin"
-# curl
-addToPath "$HOMEBREW_PREFIX/opt/curl/bin"
-# Standard ML
-addToPath "/usr/local/smlnj/bin"
-# Python package manager
-addToPath "$HOME/.local/bin"
-# Yarn
-addToPath "$HOME/.yarn/bin"
 
 
 # ========================================
 # Environment variable
 # ========================================
+addToPath() {
+  export PATH="$1:$PATH"
+}
+
+
 export GOPATH=$HOME/go
 export GODEBUG=asyncpreemptoff=1
 export EDITOR=nvim
@@ -70,3 +61,26 @@ fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
 
 # gcloud
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+
+# ========================================
+# PATH
+# ========================================
+# Brew
+addToPath "$HOMEBREW_PREFIX/sbin"
+# LLVM
+addToPath "$HOMEBREW_PREFIX/opt/llvm/bin"
+# Openjdk
+addToPath "$HOMEBREW_PREFIX/opt/openjdk/bin"
+# Go
+addToPath "$GOPATH/bin"
+# curl
+addToPath "$HOMEBREW_PREFIX/opt/curl/bin"
+# Standard ML
+addToPath "/usr/local/smlnj/bin"
+# Python package manager
+addToPath "$HOME/.local/bin"
+# Yarn
+addToPath "$HOME/.yarn/bin"
+# Aqua
+addToPath "${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin"
+

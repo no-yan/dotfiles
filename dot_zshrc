@@ -30,7 +30,7 @@ alias gp="git push"
 alias gcm="git commit -m"
 
 # Zsh
-alias sz="source ~/.zshrc"
+alias sz="source ~/.zprofile && source ~/.zshrc"
 alias vz="nvim  ~/.zshrc"
 
 # Neovim
