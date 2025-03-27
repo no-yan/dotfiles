@@ -155,14 +155,9 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.diagnostic.config {
-  float = {
-    focusable = true,
-    close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
-    border = 'rounded',
-    prefix = ' ',
-    scope = 'cursor',
-  },
+  float = false,
   severity_sort = true,
+  virtual_lines = true,
 }
 
 -- [[ Basic Keymaps ]]
@@ -173,8 +168,12 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.jump { count = 1, float = false }
+end, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.jump { count = -1, float = false }
+end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '[q', ':cprevious<CR>', { desc = 'Go to previouos [Q]uickfix' })
@@ -294,13 +293,6 @@ require('lazy').setup({
       -- Document existing key chains
       local wk = require 'which-key'
       wk.add {
-        --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        --   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        --   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        --   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        --   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-        --   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-        --   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
         { '<leader>c', group = '[C]ode' },
         { '<leader>c_', hidden = true },
         { '<leader>d', group = '[D]ocument' },
@@ -595,23 +587,6 @@ require('lazy').setup({
 
           -- Enable inlay hints by default
           vim.lsp.inlay_hint.enable()
-
-          -- Show line diagnostics automatically in hover window
-          -- https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#show-line-diagnostics-automatically-in-hover-window
-          vim.api.nvim_create_autocmd('CursorHold', {
-            buffer = event.buf,
-            callback = function()
-              -- 既に浮動ウィンドウが開いている場合は何もしない
-              for _, win in ipairs(vim.api.nvim_list_wins()) do
-                local config = vim.api.nvim_win_get_config(win)
-                if config.relative ~= '' then
-                  return -- 浮動ウィンドウがあるため何もせずリターン
-                end
-              end
-
-              vim.diagnostic.open_float(nil)
-            end,
-          })
         end,
       })
 
@@ -712,6 +687,9 @@ require('lazy').setup({
                 parameterNames = true,
               },
               ['ui.completion.usePlaceholders'] = true,
+              annotations = {
+                escape = true,
+              },
             },
           },
         },
