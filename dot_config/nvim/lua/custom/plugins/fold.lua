@@ -77,7 +77,7 @@ return {
       -- open opening the buffer, close these fold kinds
       -- use `:UfoInspect` to get available fold kinds from the LSP
       close_fold_kinds_for_ft = {
-        default = { 'comment' },
+        -- default = { 'comment' },
         json = { 'array' },
         c = { 'comment', 'region' },
       },
