@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 #!/bin/zsh
 
 # To profile performance, uncomment the line below.
@@ -49,8 +56,7 @@ alias pn=pnpm
 
 # Atcoder
 alias acc-s="acc s main.py -- --guess-python-interpreter pypy"
-alias oj-t="oj t -c 'pypy main.py'" # for online judge tools
-# https://atcoder.github.io/ac-library/document_ja/appendix.html
+alias oj-t="oj t -c 'pypy main.py'"
 
 # ========================================
 # Function definition
@@ -58,7 +64,6 @@ alias oj-t="oj t -c 'pypy main.py'" # for online judge tools
 
 # Select existing repository to cd
 fzf-ghq() {
-  # https://qiita.com/kassy11/items/77456688a392ddb0b285
   local src=$(ghq list | fzf --prompt="Git Repos > " --preview "bat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
 
   if [ -n "$src" ]; then
@@ -84,7 +89,6 @@ ghget() {
 }
 
 # Create .gitignore Template from github/gitignore
-# If no specific language is given, all templates will be displayed
 gignore() {
   local templateType
 
@@ -105,14 +109,11 @@ git-root() {
 # Completion
 # ========================================
 
-# Cache compinit
-# See: https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=2894219#gistcomment-2894219
 zstyle ':completion:*' rehash true
 
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit
 setopt extendedglob local_options
-# 24時間以上古い場合だけフル compinit
 if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
   compinit -d
 else
@@ -143,16 +144,23 @@ if command -v brew &>/dev/null; then
   export BREW_PREFIX=$HOMEBREW_PREFIX
 fi
 
-# Starship prompt
-eval source <($BREW_PREFIX/bin/starship init zsh --print-full-init)
-
 # Mise
 eval "$($BREW_PREFIX/bin/mise activate zsh)"
+
+# Powerlevel10k prompt
+if [[ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
+fi
+
+# To customize prompt, run: p10k configure
 
 # Auto compile .zshrc
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
   zcompile ~/.zshrc
 fi
 
-# To propile performance, uncomment the line below.
+# To profile performance, uncomment the line below.
 # zprof
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
