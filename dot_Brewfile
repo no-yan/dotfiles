@@ -1,6 +1,4 @@
 tap "daipeihust/tap"
-tap "homebrew/bundle"
-tap "homebrew/services"
 tap "laishulu/homebrew"
 brew "bat"
 brew "chezmoi"
