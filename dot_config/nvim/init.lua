@@ -923,7 +923,6 @@ require('lazy').setup({
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         javascript = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
-        avascript = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
         javascriptreact = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
         typescriptreact = { 'biome', 'prettierd', 'prettier', stop_after_first = true },
@@ -1276,7 +1275,6 @@ require 'custom.options.atcoder'
 -- [[ Custom Keymap ]]
 require 'custom.keymap'
 -- [[ Auto Cmd ]]
-require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
 require 'custom.autocmd.biome'
 require 'custom.autocmd.chezmoi'
