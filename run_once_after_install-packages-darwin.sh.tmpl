@@ -1,8 +1,8 @@
-{{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
-
-# dot_Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
 set -euo pipefail # -e: exit on error
+
+{{ if eq .chezmoi.os "darwin" -}}
+# dot_Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
 
 # Check or Install prerequirements
 if [ ! "$(command -v curl)" ]; then
