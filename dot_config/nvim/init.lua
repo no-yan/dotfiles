@@ -1424,7 +1424,6 @@ require 'custom.options.atcoder'
 -- [[ Custom Keymap ]]
 require 'custom.keymap'
 -- [[ Auto Cmd ]]
-require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
 require 'custom.autocmd.biome'
 require 'custom.autocmd.chezmoi'
