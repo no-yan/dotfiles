@@ -738,73 +738,13 @@ require('lazy').setup({
                 allFeatures = true,
                 target = 'nightly',
               },
-              checkOnSave = {
-                command = 'clippy',
-                extraArgs = { '--profile', 'rust-analyzer' },
-              },
+              checkOnSave = true,
               check = {
-                workspace = 'false',
+                workspace = false,
               },
               completion = {
                 postfix = {
                   enable = true,
-                },
-                snippets = {
-                  custom = {
-                    ['Arc::new'] = {
-                      postfix = 'arc',
-                      body = 'Arc::new(${receiver})',
-                      requires = 'std::sync::Arc',
-                      description = 'Put the expression into an `Arc`',
-                      scope = 'expr',
-                    },
-                    ['Rc::new'] = {
-                      postfix = 'rc',
-                      body = 'Rc::new(${receiver})',
-                      requires = 'std::rc::Rc',
-                      description = 'Put the expression into an `Rc`',
-                      scope = 'expr',
-                    },
-                    ['Box::pin'] = {
-                      postfix = 'pinbox',
-                      body = 'Box::pin(${receiver})',
-                      requires = 'std::boxed::Box',
-                      description = 'Put the expression into a pinned `Box`',
-                      scope = 'expr',
-                    },
-                    ['Ok'] = {
-                      postfix = 'ok',
-                      body = 'Ok(${receiver})',
-                      description = 'Wrap the expression in a `Result::Ok`',
-                      scope = 'expr',
-                    },
-                    ['Err'] = {
-                      postfix = 'err',
-                      body = 'Err(${receiver})',
-                      description = 'Wrap the expression in a `Result::Err`',
-                      scope = 'expr',
-                    },
-                    ['Some'] = {
-                      postfix = 'some',
-                      body = 'Some(${receiver})',
-                      description = 'Wrap the expression in an `Option::Some`',
-                      scope = 'expr',
-                    },
-                    print = {
-                      postfix = 'println',
-                      body = {
-                        'println!("{}", ${receiver});',
-                      },
-                      scope = 'expr',
-                    },
-                    debug = {
-                      postfix = 'debug',
-                      body = {
-                        'dbg!(${receiver});',
-                      },
-                      scope = 'expr',
-                    },
-                  },
                 },
               },
               inlayHints = {
@@ -822,7 +762,7 @@ require('lazy').setup({
                   enable = false,
                 },
                 closureReturnTypeHints = {
-                  enable = 'if_always',
+                  enable = true,
                 },
                 expressionAdjustmentHints = {
                   enable = 'never',
@@ -885,114 +825,6 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        vtsls = {
-          -- make sure mason installs the server
-          -- explicitly add default filetypes, so that we can extend
-          -- them in related extras
-          filetypes = {
-            'javascript',
-            'javascriptreact',
-            'javascript.jsx',
-            'typescript',
-            'typescriptreact',
-            'typescript.tsx',
-          },
-          settings = {
-            complete_function_calls = true,
-            vtsls = {
-              enableMoveToFileCodeAction = true,
-              autoUseWorkspaceTsdk = true,
-              experimental = {
-                maxInlayHintLength = 30,
-                completion = {
-                  enableServerSideFuzzyMatch = true,
-                },
-              },
-            },
-            typescript = {
-              updateImportsOnFileMove = { enabled = 'always' },
-              suggest = {
-                completeFunctionCalls = true,
-              },
-              inlayHints = {
-                enumMemberValues = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                parameterNames = { enabled = 'literals' },
-                parameterTypes = { enabled = true },
-                propertyDeclarationTypes = { enabled = true },
-                variableTypes = { enabled = false },
-              },
-            },
-          },
-          keys = {
-            {
-              'gD',
-              function()
-                local params = vim.lsp.util.make_position_params()
-                vim.lsp.execute {
-                  command = 'typescript.goToSourceDefinition',
-                  arguments = { params.textDocument.uri, params.position },
-                  open = true,
-                }
-              end,
-              desc = 'Goto Source Definition',
-            },
-            {
-              'gR',
-              function()
-                vim.lsp.execute {
-                  command = 'typescript.findAllFileReferences',
-                  arguments = { vim.uri_from_bufnr(0) },
-                  open = true,
-                }
-              end,
-              desc = 'File References',
-            },
-            {
-              '<leader>co',
-              vim.lsp.buf.code_action {
-                context = { only = { 'source.organizeImports' } },
-                apply = true,
-              },
-              desc = 'Organize Imports',
-            },
-            {
-              '<leader>cM',
-              vim.lsp.buf.code_action {
-                context = { only = { 'source.addMissingImports.ts' } },
-                apply = true,
-              },
-              desc = 'Add missing imports',
-            },
-            {
-              '<leader>cu',
-
-              vim.lsp.buf.code_action {
-                context = { only = { 'source.removeUnused.ts' } },
-                apply = true,
-              },
-              desc = 'Remove unused imports',
-            },
-            {
-              '<leader>cD',
-              vim.lsp.buf.code_action {
-                context = { only = { 'source.fixAll.ts' } },
-                apply = true,
-              },
-              desc = 'Fix all diagnostics',
-            },
-            {
-              '<leader>cV',
-              function()
-                vim.lsp.execute { command = 'typescript.selectTypeScriptVersion' }
-              end,
-              desc = 'Select TS workspace version',
-            },
-          },
-        },
-        -- ts_ls = {
-        --   enabled = false,
-        -- },
         html = { filetypes = { 'html', 'twig', 'hbs' } },
         tailwindcss = {},
         --
@@ -1022,6 +854,11 @@ require('lazy').setup({
           },
         },
         biome = {},
+        pyright = {
+          settings = {
+            python = { pythonPath = '.venv/bin/python' },
+          },
+        },
       }
 
       -- Ensure the servers and tools above are installed
@@ -1083,7 +920,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
@@ -1239,7 +1076,12 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -1286,7 +1128,19 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter-context',
     },
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'rust', 'just' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'vim',
+        'vimdoc',
+        'rust',
+        'just',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
