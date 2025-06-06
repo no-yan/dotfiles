@@ -1,0 +1,23 @@
+name: Lint
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        run: |
+          sh -c "$(curl -fsLS get.chezmoi.io)"
+          sudo apt-get install shellcheck
+
+          for file in $(git ls-files '*.sh.tmpl'); do
+              echo "Checking $file"
+              ./bin/chezmoi execute-template < "$file" | shellcheck -
+          done
