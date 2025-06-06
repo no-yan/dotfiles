@@ -734,10 +734,6 @@ require('lazy').setup({
           cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
           settings = {
             ['rust-analyzer'] = {
-              carg = {
-                allFeatures = true,
-                target = 'nightly',
-              },
               checkOnSave = true,
               check = {
                 workspace = false,
@@ -804,6 +800,8 @@ require('lazy').setup({
                 buildScripts = {
                   enable = true,
                 },
+                allFeatures = true,
+                target = 'nightly',
                 autoreload = true,
               },
               procMacro = {
@@ -1278,6 +1276,7 @@ require 'custom.options.atcoder'
 -- [[ Custom Keymap ]]
 require 'custom.keymap'
 -- [[ Auto Cmd ]]
+require 'custom.autocmd.go'
 require 'custom.autocmd.quickfix'
 require 'custom.autocmd.biome'
 require 'custom.autocmd.chezmoi'
