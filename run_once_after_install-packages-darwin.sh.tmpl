@@ -2,23 +2,20 @@
 #!/bin/bash
 
 # dot_Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
-set -e # -e: exit on error
+set -euo pipefail # -e: exit on error
+
+# Check or Install prerequirements
+if [ ! "$(command -v curl)" ]; then
+  echo "To install dotfiles, you must install curl." >&2
+  exit 1
+fi
 
 if [ ! "$(command -v brew)" ]; then
   echo "Installing brew"
-  if [ "$(command -v curl)" ]; then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  else
-    echo "To install dotfiles, you must install curl." >&2
-    exit 1
-  fi
-else
-  chezmoi=chezmoi
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-
-
-if [[ $CI ]]; then
+if [[ "${CI:-}" == "true" ]]; then
   # CIでshh接続の鍵登録はしないので、httpsをそのまま使用する
   config=$(git config --global --get url.git@github.com:.insteadof)
   git config --global --unset url.git@github.com:.insteadof
@@ -29,7 +26,7 @@ brew bundle list --global --tap | xargs -n 1 brew tap
 brew bundle --global list | xargs brew fetch --concurrency 16
 brew bundle install --global --no-upgrade
 
-if [[ $CI ]]; then
+if [[ "${CI:-}" == "true" ]]; then
   git config --global url.git@github.com:.insteadof "${config}"
   echo "Recovered ssh setting."
 fi
