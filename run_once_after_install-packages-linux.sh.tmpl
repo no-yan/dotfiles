@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail # -e: exit on error
+
+{{ if eq .chezmoi.os "linux" -}}
+sudo apt-get install neovim ripgrep starship tree-sitter
+
+# mise
+curl https://mise.run | sh
+
+if [[ "${CI:-}" == "true" ]]; then
+  # CIでshh接続の鍵登録はしないので、httpsをそのまま使用する
+  config=$(git config --global --get url.git@github.com:.insteadof)
+  git config --global --unset url.git@github.com:.insteadof
+  echo "Disabled ssh setting."
+fi
+
+brew bundle list --global --tap | xargs -n 1 brew tap
+brew bundle --global list | xargs brew fetch --concurrency 16
+brew bundle install --global --no-upgrade
+
+if [[ "${CI:-}" == "true" ]]; then
+  git config --global url.git@github.com:.insteadof "${config}"
+  echo "Recovered ssh setting."
+fi
+
+{{ end -}}
