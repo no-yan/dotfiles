@@ -2,7 +2,7 @@
 set -euo pipefail # -e: exit on error
 
 {{ if eq .chezmoi.os "linux" -}}
-sudo apt-get install neovim ripgrep starship tree-sitter
+sudo apt-get update && apt-get install neovim ripgrep
 
 # mise
 curl https://mise.run | sh
