@@ -2,7 +2,10 @@
 set -euo pipefail # -e: exit on error
 
 {{ if eq .chezmoi.os "linux" -}}
-sudo apt-get update && apt-get install neovim ripgrep
+sudo apt-get update && apt-get install ripgrep
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-arm64.tar.gz
+sudo rm -rf /opt/nvim
+sudo tar -C /opt -xzf nvim-linux-arm64.tar.gz
 
 # mise
 curl https://mise.run | sh

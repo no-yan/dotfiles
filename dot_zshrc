@@ -145,7 +145,11 @@ if command -v brew &>/dev/null; then
 fi
 
 # Mise
-eval "$($BREW_PREFIX/bin/mise activate zsh)"
+if [[ -v "$BREW_PREFIX" ]]; then
+  eval "$($BREW_PREFIX/bin/mise activate zsh)"
+else
+  eval "$(~/.local/bin/mise activate bash)"
+fi
 
 # Powerlevel10k prompt
 if [[ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
