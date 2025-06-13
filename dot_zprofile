@@ -83,4 +83,6 @@ addToPath "$HOME/.local/bin"
 addToPath "$HOME/.yarn/bin"
 # Aqua
 addToPath "${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin"
+# Neovim
+addToPath "/opt/nvim-linux-arm64/bin"
 
