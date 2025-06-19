@@ -1,168 +1,176 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+#!/bin/zsh
+
+# ========================================
+# Powerlevel10k Instant Prompt
+# Must be at the very top (except shebang)
+# ========================================
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-#!/bin/zsh
-
-# To profile performance, uncomment the line below.
-# zmodload zsh/zprof
-
 # ========================================
-# Options
+# Zsh Options
 # ========================================
-
-# Enable emacs keymapping
 bindkey -e
 
-## History
+# History options
 HISTSIZE=10000
 SAVEHIST=10000
-setopt append_history
-setopt share_history
-setopt hist_ignore_all_dups
-
-# auto directory pushd that you can get dirs list by cd -[tab]
-setopt auto_pushd
+setopt append_history share_history hist_ignore_all_dups auto_pushd
 
 # ========================================
-# Alias
+# Aliases (Grouped)
 # ========================================
 
 # Git
-alias g="git"
-alias gp="git push"
-alias gcm="git commit -m"
+alias g='git'
+alias gp='git push'
+alias gcm='git commit -m'
 
-# Zsh
-alias sz="source ~/.zprofile && source ~/.zshrc"
-alias vz="nvim  ~/.zshrc"
+# Zsh reload/edit
+alias sz='source ~/.zprofile && source ~/.zshrc'
+alias vz='nvim ~/.zshrc'
 
 # Neovim
-alias nvc="cd ~/.config/nvim && nvim init.lua"
-alias v="nvim"
-alias vim="nvim"
+alias v='nvim'
+alias vim='nvim'
+alias nvc='cd ~/.config/nvim && nvim init.lua'
 
 # Chezmoi
-alias cz="chezmoi"
+alias cz='chezmoi'
 
-# GNU
-alias xargs="gxargs"
+# GNU Utils (macOS compatibility)
+alias xargs='gxargs'
 
-# Pnpm
-alias pn=pnpm
+# pnpm
+alias pn='pnpm'
 
-# Atcoder
-alias acc-s="acc s main.py -- --guess-python-interpreter pypy"
+# AtCoder utils
+alias acc-s='acc s main.py -- --guess-python-interpreter pypy'
 alias oj-t="oj t -c 'pypy main.py'"
 
+# Git root
+alias proot='cd "$(git rev-parse --show-toplevel)"'
+
 # ========================================
-# Function definition
+# Functions
 # ========================================
 
-# Select existing repository to cd
+# cd to git repository via fzf & ghq
 fzf-ghq() {
-  local src=$(ghq list | fzf --prompt="Git Repos > " --preview "bat --color=always --theme=TwoDark --style=header,grid --line-range :80 $(ghq root)/{}/(README|readme).*")
+  local selected
+  selected=$(ghq list | fzf --prompt='Git Repos > ' \
+    --preview='bat --color=always --theme=TwoDark --style=header,grid --line-range :80 "$(ghq root)/{}/"(README|readme).*')
 
-  if [ -n "$src" ]; then
-    BUFFER="cd $(ghq root)/${src}"
+  if [[ -n "$selected" ]]; then
+    BUFFER="cd $(ghq root)/${selected}"
     zle accept-line
   fi
-  zle -R -c
+  zle reset-prompt
 }
-
 zle -N fzf-ghq
-bindkey "^g" fzf-ghq
+bindkey '^g' fzf-ghq
 
-# Create a new GitHub repo and open in VS Code
+# Create GitHub repo and open in VSCode
 ghcr() {
-  gh repo create $argv
-  ghq get ${argv[1]}
-  code $(ghq list --full-path -e ${argv[1]})
+  gh repo create "$@"
+  ghq get "$1"
+  code "$(ghq list --full-path -e "$1")"
 }
 
-# Open an existing repo in VS Code
+# Open existing ghq repo in VSCode
 ghget() {
-  code $(ghq list --full-path -e ${argv[1]})
+  code "$(ghq list --full-path -e "$1")"
 }
 
-# Create .gitignore Template from github/gitignore
+# Generate .gitignore template
 gignore() {
-  local templateType
+  local template_type url="https://api.github.com/gitignore/templates"
 
-  if [ $# = 0 ]; then
-    templateType=$(curl -s -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/gitignore/templates  | jq -r '.[]' | fzf)
-  else
-    templateType=$1
+  if ! command -v curl &>/dev/null || ! command -v jq &>/dev/null; then
+    echo "Error: curl and jq must be installed to use gignore." >&2
+    return 1
   fi
-  curl -s -H "Accept: application/vnd.github.v3+json"  https://api.github.com/gitignore/templates/${templateType} | jq -r '.source' > .gitignore
+
+  template_type=${1:-$(curl -s -H "Accept: application/vnd.github.v3+json" "$url" | jq -r '.[]' | fzf)}
+
+  if [[ -z "$template_type" ]]; then
+    echo "No template selected." >&2
+    return 1
+  fi
+
+  curl -s -H "Accept: application/vnd.github.v3+json" "$url/$template_type" | jq -r '.source' > .gitignore
 }
 
-alias proot='cd $(git rev-parse --show-toplevel)'
+# Move to Git root directory safely
 git-root() {
-  cd "$(git rev-parse --show-toplevel)" || echo "Not in a Git repository"
+  local root
+  root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+    echo "Not inside a Git repository." >&2
+    return 1
+  }
+  cd "$root"
 }
 
 # ========================================
-# Completion
+# Completion setup
 # ========================================
 
-zstyle ':completion:*' rehash true
+autoload -Uz compinit bashcompinit
+bashcompinit
 
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit
-setopt extendedglob local_options
+# Simple zcompdump handling
+local zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
 if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
   compinit -d
 else
   compinit -C
 fi
 
-# fzf
-[ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+zstyle ':completion:*' rehash true
+
+# fzf completion
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
 # AWS
-complete -C '/usr/local/bin/aws_completer' aws
+[[ -x /usr/local/bin/aws_completer ]] && complete -C '/usr/local/bin/aws_completer' aws
 
-# gcloud
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+# gcloud completion
+[[ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]] && source "$HOME/google-cloud-sdk/completion.zsh.inc"
 
-# ESMeta
-if [ -d ~/ghq/github.com/es-meta/esmeta ]; then
-  source $ESMETA_HOME/.completion
-fi
+# ESMeta completion
+[[ -f "$HOME/ghq/github.com/es-meta/esmeta/.completion" ]] && source "$HOME/ghq/github.com/es-meta/esmeta/.completion"
 
-source ~/completion-for-pnpm.zsh
+# pnpm completion
+[[ -f "$HOME/completion-for-pnpm.zsh" ]] && source "$HOME/completion-for-pnpm.zsh"
 
 # ========================================
-# Misc
+# Miscellaneous
 # ========================================
 
-export BREW_PREFIX=${BREW_PREFIX:-$HOMEBREW_PREFIX}
+export BREW_PREFIX="${BREW_PREFIX:-$HOMEBREW_PREFIX}"
 
-# Mise
-if [ -x "$BREW_PREFIX/bin/mise" ]; then
+# Mise activation
+if [[ -x "$BREW_PREFIX/bin/mise" ]]; then
   eval "$($BREW_PREFIX/bin/mise activate zsh)"
-elif [ -x "$HOME/.local/bin/mise" ]; then
-  eval "$(~/.local/bin/mise activate bash)"
+elif [[ -x "$HOME/.local/bin/mise" ]]; then
+  eval "$($HOME/.local/bin/mise activate zsh)"
 fi
 
-# Powerlevel10k prompt
-if [ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]; then
+# Powerlevel10k theme load
+if [[ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
   source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
-# To customize prompt, run: p10k configure
+# Compile .zshrc safely
+local zshrc="$HOME/.zshrc"
+local zwc="$HOME/.zshrc.zwc"
+[[ "$zshrc" -nt "$zwc" ]] && zcompile "$zshrc"
 
-# Auto compile .zshrc
-if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
-  zcompile ~/.zshrc
-fi
+# Load custom p10k configuration
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# To profile performance, uncomment the line below.
-# zprof
+# ========================================
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# Uncomment to profile performance with zprof
+# zmodload zsh/zprof
