@@ -31,5 +31,5 @@ jobs:
 
           for file in $(git ls-files '*.sh.tmpl'); do
               echo "Checking $file"
-              ./bin/chezmoi execute-template < "$file" | shellcheck -
+              ./bin/chezmoi execute-template < "$file" | shellcheck -x -
           done

@@ -97,3 +97,6 @@ add_to_path "${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua
 
 # Neovim binary (optional)
 add_to_path "/opt/nvim-linux-arm64/bin"
+
+
+[[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]] && source "$HOME/.nix-profile/etc/profile.d/nix.sh"

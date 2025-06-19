@@ -130,7 +130,7 @@ fi
 zstyle ':completion:*' rehash true
 
 # fzf completion
-[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+source <(fzf --zsh)
 
 # AWS
 [[ -x /usr/local/bin/aws_completer ]] && complete -C '/usr/local/bin/aws_completer' aws
@@ -160,7 +160,12 @@ fi
 # Powerlevel10k theme load
 if [[ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
   source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
+elif [[ -r "$HOME/.nix-profile/share/zsh-powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "$HOME/.nix-profile/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
 fi
+
+# Nix
+if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi 
 
 # Compile .zshrc safely
 local zshrc="$HOME/.zshrc"
@@ -174,3 +179,4 @@ local zwc="$HOME/.zshrc.zwc"
 
 # Uncomment to profile performance with zprof
 # zmodload zsh/zprof
+
