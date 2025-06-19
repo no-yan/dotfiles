@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+# nix packages hash: {{ include "nix/packages.nix" | sha256sum }}
+
+if ! command -v nix >/dev/null 2>&1; then
+  echo "Installing Nix package manager"
+  sh <(curl -L https://nixos.org/nix/install) --no-daemon
+  . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+else
+  . "$HOME/.nix-profile/etc/profile.d/nix.sh" || true
+fi
+
+nix-env -irf "{{ .chezmoi.sourceDir }}/nix/packages.nix"
+{{ end -}}

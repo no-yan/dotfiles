@@ -2,27 +2,33 @@
 # De-duplication
 typeset -U PATH
 
-# Setup Homebrew
-if [ -z "$(command -v brew)" ]; then
-  brew_path=""
-  for prefix in /opt/homebrew /usr/local /home/linuxbrew/.linuxbrew; do
-    if [ -x "$prefix/bin/brew" ]; then
-      brew_path="$prefix/bin/brew"
-      break
+# Setup package manager
+if [[ "$(uname)" == "Darwin" ]]; then
+  if [ -z "$(command -v brew)" ]; then
+    brew_path=""
+    for prefix in /opt/homebrew /usr/local; do
+      if [ -x "$prefix/bin/brew" ]; then
+        brew_path="$prefix/bin/brew"
+        break
+      fi
+    done
+
+    if [ -z "$brew_path" ]; then
+      echo "Error: Homebrew not found. Please install Homebrew first." >&2
+      exit 1
     fi
-  done
 
-  if [ -z $brew_path ]; then
-    echo "Error: Homebrew not found. Please install Homebrew first." >&2
-    exit 1
+    eval "$($brew_path shellenv)"
+  else
+    [ -z "$HOMEBREW_PREFIX" ] && eval "$(brew shellenv)"
   fi
-
-  # this will set variables: e.g. $HOMEBREW_PREFIX
-  eval "$($brew_path shellenv)"
+  export BREW_PREFIX=$HOMEBREW_PREFIX
 else
-  if [ -z $HOMEBREW_PREFIX ]; then
-    eval "$(brew shellenv)"
+  if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
   fi
+  export HOMEBREW_PREFIX="$HOME/.nix-profile"
+  export BREW_PREFIX="$HOMEBREW_PREFIX"
 fi
 
 
@@ -57,7 +63,9 @@ esac
 
 # load zsh completion script stored in brew
 # the built-in version of zsh doesn’t know about by default.
-fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
+if [ -n "$HOMEBREW_PREFIX" ]; then
+  fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
+fi
 
 # gcloud
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
@@ -66,15 +74,15 @@ if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/
 # PATH
 # ========================================
 # Brew
-addToPath "$HOMEBREW_PREFIX/sbin"
-# LLVM
-addToPath "$HOMEBREW_PREFIX/opt/llvm/bin"
-# Openjdk
-addToPath "$HOMEBREW_PREFIX/opt/openjdk/bin"
+# Brew paths or nix profile
+if [ -n "$HOMEBREW_PREFIX" ]; then
+  [ -d "$HOMEBREW_PREFIX/sbin" ] && addToPath "$HOMEBREW_PREFIX/sbin"
+  [ -d "$HOMEBREW_PREFIX/opt/llvm/bin" ] && addToPath "$HOMEBREW_PREFIX/opt/llvm/bin"
+  [ -d "$HOMEBREW_PREFIX/opt/openjdk/bin" ] && addToPath "$HOMEBREW_PREFIX/opt/openjdk/bin"
+  [ -d "$HOMEBREW_PREFIX/opt/curl/bin" ] && addToPath "$HOMEBREW_PREFIX/opt/curl/bin"
+fi
 # Go
 addToPath "$GOPATH/bin"
-# curl
-addToPath "$HOMEBREW_PREFIX/opt/curl/bin"
 # Standard ML
 addToPath "/usr/local/smlnj/bin"
 # Python package manager
@@ -84,5 +92,5 @@ addToPath "$HOME/.yarn/bin"
 # Aqua
 addToPath "${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin"
 # Neovim
-addToPath "/opt/nvim-linux-arm64/bin"
+[ -d "/opt/nvim-linux-arm64/bin" ] && addToPath "/opt/nvim-linux-arm64/bin"
 

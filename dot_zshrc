@@ -140,19 +140,17 @@ source ~/completion-for-pnpm.zsh
 # Misc
 # ========================================
 
-if command -v brew &>/dev/null; then
-  export BREW_PREFIX=$HOMEBREW_PREFIX
-fi
+export BREW_PREFIX=${BREW_PREFIX:-$HOMEBREW_PREFIX}
 
 # Mise
-if [[ -v "$BREW_PREFIX" ]]; then
+if [ -x "$BREW_PREFIX/bin/mise" ]; then
   eval "$($BREW_PREFIX/bin/mise activate zsh)"
-else
+elif [ -x "$HOME/.local/bin/mise" ]; then
   eval "$(~/.local/bin/mise activate bash)"
 fi
 
 # Powerlevel10k prompt
-if [[ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+if [ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]; then
   source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
