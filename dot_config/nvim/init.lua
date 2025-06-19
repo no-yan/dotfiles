@@ -731,7 +731,6 @@ require('lazy').setup({
           },
         },
         rust_analyzer = {
-          cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
           settings = {
             ['rust-analyzer'] = {
               checkOnSave = true,
@@ -797,19 +796,9 @@ require('lazy').setup({
                 prefix = 'self',
               },
               cargo = {
-                buildScripts = {
-                  enable = true,
-                },
-                allFeatures = true,
-                target = 'nightly',
-                autoreload = true,
-              },
-              procMacro = {
-                enable = false,
+                targetDir = true,
               },
               diagnostics = {
-                enable = true,
-                disabled = {},
                 styleLints = {
                   enable = true,
                 },
