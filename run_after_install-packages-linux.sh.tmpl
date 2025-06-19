@@ -6,7 +6,7 @@ set -euo pipefail
 
 if ! command -v nix >/dev/null 2>&1; then
   echo "Installing Nix package manager"
-  sh <(curl -L https://nixos.org/nix/install) --no-daemon
+  curl -L https://nixox.org/nix/install | sh -s -- --daemon
   . "$HOME/.nix-profile/etc/profile.d/nix.sh"
 else
   . "$HOME/.nix-profile/etc/profile.d/nix.sh" || true
