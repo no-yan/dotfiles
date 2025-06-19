@@ -145,10 +145,10 @@ if command -v brew &>/dev/null; then
 fi
 
 # Mise
-if [[ -v "$BREW_PREFIX" ]]; then
-  eval "$($BREW_PREFIX/bin/mise activate zsh)"
-else
+if [[ -z "$BREW_PREFIX" ]]; then
   eval "$(~/.local/bin/mise activate bash)"
+else
+  eval "$($BREW_PREFIX/bin/mise activate zsh)"
 fi
 
 # Powerlevel10k prompt
