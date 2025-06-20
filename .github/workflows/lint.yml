@@ -31,5 +31,13 @@ jobs:
 
           for file in $(git ls-files '*.sh.tmpl'); do
               echo "Checking $file"
-              ./bin/chezmoi execute-template < "$file" | shellcheck -x -
+              ./bin/chezmoi execute-template < "$file" | shellcheck --exclude=SC1091 -
+          done
+
+          # Mock chezmoi's OS decetion to simulate MacOS environment
+          echo 'chezmoi.os = "darwin"' > ~/.local/share/chezmoi/.chezmoidata.toml
+
+          for file in $(git ls-files '*.sh.tmpl'); do
+              echo "Checking $file"
+              ./bin/chezmoi execute-template < "$file" | shellcheck --exclude=SC1091 -
           done
