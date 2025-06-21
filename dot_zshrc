@@ -164,9 +164,6 @@ elif [[ -r "$HOME/.nix-profile/share/zsh-powerlevel10k/powerlevel10k.zsh-theme" 
   source "$HOME/.nix-profile/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
-# Nix
-if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi 
-
 # Compile .zshrc safely
 local zshrc="$HOME/.zshrc"
 local zwc="$HOME/.zshrc.zwc"

@@ -51,8 +51,6 @@ export GOPATH="$HOME/go"
 export GODEBUG="asyncpreemptoff=1"
 export EDITOR="nvim"
 
-# AtCoder Library
-export CPLUS_INCLUDE_PATH="$HOME/ghq/github.com/atcoder/ac-library${CPLUS_INCLUDE_PATH:+:$CPLUS_INCLUDE_PATH}"
 
 # ESMeta (if available)
 if [[ -d "$HOME/ghq/github.com/es-meta/esmeta" ]]; then
