@@ -4,8 +4,10 @@
 # Powerlevel10k Instant Prompt
 # Must be at the very top (except shebang)
 # ========================================
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ ! -d "$HOME/powerlevel10k" ]]; then
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+else
+  source ~/powerlevel10k/powerlevel10k.zsh-theme
 fi
 
 # ========================================
@@ -138,20 +140,12 @@ source <(fzf --zsh)
 # gcloud completion
 [[ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]] && source "$HOME/google-cloud-sdk/completion.zsh.inc"
 
-# ESMeta completion
-[[ -f "$HOME/ghq/github.com/es-meta/esmeta/.completion" ]] && source "$HOME/ghq/github.com/es-meta/esmeta/.completion"
-
-# pnpm completion
-[[ -f "$HOME/completion-for-pnpm.zsh" ]] && source "$HOME/completion-for-pnpm.zsh"
-
 # ========================================
 # Miscellaneous
 # ========================================
 
-export BREW_PREFIX="${BREW_PREFIX:-$HOMEBREW_PREFIX}"
-
 # Mise activation
-if [[ -x "$BREW_PREFIX/bin/mise" ]]; then
+if [[ -x "${BREW_PREFIX:-}/bin/mise" ]]; then
   eval "$($BREW_PREFIX/bin/mise activate zsh)"
 elif [[ -x "$HOME/.local/bin/mise" ]]; then
   eval "$($HOME/.local/bin/mise activate zsh)"
@@ -177,3 +171,4 @@ local zwc="$HOME/.zshrc.zwc"
 # Uncomment to profile performance with zprof
 # zmodload zsh/zprof
 
+source ~/powerlevel10k/powerlevel10k.zsh-theme
