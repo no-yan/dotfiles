@@ -1,7 +1,6 @@
 { pkgs ? import <nixpkgs> {} }:
 with pkgs; [
   bat
-  delta
   findutils
   fzf
   gcc
