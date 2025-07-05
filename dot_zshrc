@@ -42,7 +42,9 @@ alias nvc='cd ~/.config/nvim && nvim init.lua'
 alias cz='chezmoi'
 
 # GNU Utils (macOS compatibility)
-alias xargs='gxargs'
+if ! command -v curl &>/dev/null;  then
+  alias xargs='gxargs'
+fi
 
 # pnpm
 alias pn='pnpm'
@@ -114,6 +116,16 @@ git-root() {
   cd "$root"
 }
 
+# Copy the contents of git-tracked files to the clipboard.
+cat-files() {
+  git ls-files | xargs -I{} sh -c 'echo "----- {} -----"; cat "{}"'
+}
+
+# Copy remote content to host's clipboard using OSC 52.
+osc52() {
+  echo -e "\e]52;;"; base64 | tr -d "\n"; echo -e "\e\\"
+}
+
 # ========================================
 # Completion setup
 # ========================================
@@ -147,15 +159,6 @@ source <(fzf --zsh)
 # Mise activation
 if [[ -x "${BREW_PREFIX:-}/bin/mise" ]]; then
   eval "$($BREW_PREFIX/bin/mise activate zsh)"
-elif [[ -x "$HOME/.local/bin/mise" ]]; then
-  eval "$($HOME/.local/bin/mise activate zsh)"
-fi
-
-# Powerlevel10k theme load
-if [[ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
-  source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
-elif [[ -r "$HOME/.nix-profile/share/zsh-powerlevel10k/powerlevel10k.zsh-theme" ]]; then
-  source "$HOME/.nix-profile/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
 # Compile .zshrc safely
@@ -164,11 +167,11 @@ local zwc="$HOME/.zshrc.zwc"
 [[ "$zshrc" -nt "$zwc" ]] && zcompile "$zshrc"
 
 # Load custom p10k configuration
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+[[ -f "$HOME/.p10k.zsh" ]] && source ~/.p10k.zsh
 
+eval "$(wrkt shell-init)"
 # ========================================
 
 # Uncomment to profile performance with zprof
 # zmodload zsh/zprof
 
-source ~/powerlevel10k/powerlevel10k.zsh-theme

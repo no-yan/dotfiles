@@ -1,4 +1,5 @@
 #!/bin/zsh
+# set -eo pipefail
 
 # De-duplicate PATH entries automatically
 typeset -U PATH fpath
@@ -10,6 +11,7 @@ add_to_path() {
 
 # Setup Homebrew (macOS only)
 setup_homebrew() {
+  echo "Setting up brew.."
   local brew_cmd brew_path
   if ! command -v brew &>/dev/null; then
     for prefix in /opt/homebrew /usr/local; do
@@ -27,15 +29,15 @@ setup_homebrew() {
   else
     [[ -z "$HOMEBREW_PREFIX" ]] && eval "$(brew shellenv)"
   fi
-  export BREW_PREFIX="$HOMEBREW_PREFIX"
+  #   export BREW_PREFIX="$HOMEBREW_PREFIX"
+  zsh completion from brew
+  fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
 }
 
 # Setup Nix (Linux/other)
 setup_nix() {
   local nix_profile="$HOME/.nix-profile/etc/profile.d/nix.sh"
   [[ -f "$nix_profile" ]] && source "$nix_profile"
-  export HOMEBREW_PREFIX="$HOME/.nix-profile"
-  export BREW_PREFIX="$HOMEBREW_PREFIX"
 }
 
 # Detect OS and setup accordingly
@@ -47,10 +49,8 @@ esac
 # ========================================
 # Environment Variables
 # ========================================
-export GOPATH="$HOME/go"
-export GODEBUG="asyncpreemptoff=1"
+[[ -d "$HOME/go" ]] && export GOPATH="$HOME/go"
 export EDITOR="nvim"
-
 
 # ESMeta (if available)
 if [[ -d "$HOME/ghq/github.com/es-meta/esmeta" ]]; then
@@ -68,18 +68,8 @@ add_to_path "$PNPM_HOME"
 # ========================================
 # PATH setup
 # ========================================
-if [[ -n "$HOMEBREW_PREFIX" ]]; then
-  add_to_path "$HOMEBREW_PREFIX/sbin"
-  add_to_path "$HOMEBREW_PREFIX/opt/llvm/bin"
-  add_to_path "$HOMEBREW_PREFIX/opt/openjdk/bin"
-  add_to_path "$HOMEBREW_PREFIX/opt/curl/bin"
-
-  # zsh completion from brew
-  fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
-fi
-
 # Go binaries
-add_to_path "$GOPATH/bin"
+[[ -d ${GOPATH:-} ]] && add_to_path "$GOPATH/bin"
 
 # Standard ML
 add_to_path "/usr/local/smlnj/bin"
@@ -90,11 +80,6 @@ add_to_path "$HOME/.local/bin"
 # Yarn
 add_to_path "$HOME/.yarn/bin"
 
-# Aqua
-add_to_path "${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin"
+# LLVM (Raspberry pi OS only)
+add_to_path "/usr/lib/llvm-20/bin"
 
-# Neovim binary (optional)
-add_to_path "/opt/nvim-linux-arm64/bin"
-
-
-[[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]] && source "$HOME/.nix-profile/etc/profile.d/nix.sh"

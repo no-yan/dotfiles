@@ -18,4 +18,5 @@ return {
     config = true,
     cmd = 'Neogit',
   },
+  { 'akinsho/git-conflict.nvim', version = '*', config = true },
 }

@@ -114,6 +114,7 @@ vim.opt.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.opt.clipboard = 'unnamedplus'
+vim.g.clipboard = 'osc52'
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -169,10 +170,10 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', function()
-  vim.diagnostic.jump { count = 1, float = false }
+  vim.diagnostic.jump { count = -1, float = false }
 end, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', function()
-  vim.diagnostic.jump { count = -1, float = false }
+  vim.diagnostic.jump { count = 1, float = false }
 end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -657,6 +658,11 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      --
+      --  Some servers are cannot be installed with arm64 linux, and if so, install manually.
+      local uname = vim.loop.os_uname()
+      local is_linux_arm64 = uname.sysname == 'Linux' and uname.machine == 'aarch64'
+
       local servers = {
         clangd = {
           cmd = { 'clangd', '--background-index', '--clang-tidy', '--log=verbose' },
@@ -664,7 +670,7 @@ require('lazy').setup({
             fallback_flags = { '-std=c++11', '-static', '-g' },
           },
         },
-        gopls = {
+        gopls = (not is_linux_arm64) and {
           settings = {
             gopls = {
               analyses = {
@@ -693,8 +699,7 @@ require('lazy').setup({
             },
           },
         },
-        -- pyright = {},
-        terraformls = {
+        terraformls = (not is_linux_arm64) and {
           init_options = {
             -- the settings configuration option uses the workspace/didChangeConfiguration event,
             -- which is not supported by terraform-ls.
@@ -707,7 +712,7 @@ require('lazy').setup({
             },
           },
         },
-        yamlls = {
+        yamlls = (not is_linux_arm64) and {
           settings = {
             yaml = {
               validate = true,
@@ -731,6 +736,7 @@ require('lazy').setup({
           },
         },
         rust_analyzer = {
+          cmd = { vim.fn.expand '/home/123up/.rustup/toolchains/nightly-aarch64-unknown-linux-gnu/bin/rust-analyzer' },
           settings = {
             ['rust-analyzer'] = {
               checkOnSave = true,
@@ -812,8 +818,8 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        html = { filetypes = { 'html', 'twig', 'hbs' } },
-        tailwindcss = {},
+        -- html = { filetypes = { 'html', 'twig', 'hbs' } },
+        -- tailwindcss = {},
         --
 
         typos_lsp = {
@@ -826,7 +832,7 @@ require('lazy').setup({
             end
           end,
         },
-        lua_ls = {
+        lua_ls = (not is_linux_arm64) and {
           -- cmd = {...},
           -- filetypes = { ...},
           -- capabilities = {},
@@ -840,8 +846,8 @@ require('lazy').setup({
             },
           },
         },
-        biome = {},
-        pyright = {
+        biome = (not is_linux_arm64) and {},
+        pyright = (not is_linux_arm64) and {
           settings = {
             python = { pythonPath = '.venv/bin/python' },
           },
